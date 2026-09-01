@@ -9,7 +9,7 @@
   --bg: #f4f7fb;
   --white: #fff;
   --radius: 20px;
-  --header-h: 68px;
+  --header-h: 56px;
   --shadow: 0 18px 50px rgba(8, 36, 79, 0.12);
 }
 
@@ -51,8 +51,25 @@ button {
 }
 
 .wrap {
-  width: min(1180px, calc(100% - 40px));
+  width: min(1286px, calc(100% - 48px));
   margin: 0 auto;
+}
+
+/* Live-site show/hide utilities (same boundaries as heri2go.com) */
+@media (max-width: 1023px) {
+  .gt-sm { display: none !important; }
+}
+
+@media (min-width: 1024px) {
+  .lt-md { display: none !important; }
+}
+
+@media (min-width: 600px) {
+  .lt-sm { display: none !important; }
+}
+
+@media (max-width: 599px) {
+  .gt-xs { display: none !important; }
 }
 
 .dev-banner {
@@ -94,7 +111,7 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  width: min(1180px, calc(100% - 40px));
+  width: min(1286px, calc(100% - 48px));
 }
 
 .logo img {
@@ -180,7 +197,9 @@ button {
 }
 
 .hamburger {
-  display: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 42px;
   height: 42px;
   border-radius: 50%;
@@ -288,7 +307,7 @@ button {
 }
 
 .clients-label {
-  width: min(1180px, calc(100% - 40px));
+  width: min(1286px, calc(100% - 48px));
   margin: 0 auto 10px;
   font-size: 11px;
   letter-spacing: 0.16em;
@@ -772,59 +791,41 @@ button {
   to { transform: translateX(0); }
 }
 
-@media (max-width: 960px) {
-  .nav,
-  .header-actions {
-    display: none;
-  }
+.mobile-nav.is-open {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: absolute;
+  top: var(--header-h);
+  right: 20px;
+  width: min(280px, calc(100% - 40px));
+  background: var(--white);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 12px;
+  z-index: 130;
+}
 
-  .hamburger {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
+.mobile-nav a,
+.mobile-nav .btn {
+  width: 100%;
+}
 
-  .mobile-nav.is-open {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    position: absolute;
-    top: var(--header-h);
-    right: 20px;
-    width: min(280px, calc(100% - 40px));
-    background: var(--white);
-    border-radius: 16px;
-    box-shadow: var(--shadow);
-    padding: 12px;
-    z-index: 130;
-  }
+.mobile-nav a {
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: var(--ink);
+  font-size: 14px;
+}
 
-  .mobile-nav a,
-  .mobile-nav .btn {
-    width: 100%;
-  }
-
-  .mobile-nav a {
-    padding: 10px 12px;
-    border-radius: 10px;
-    color: var(--ink);
-    font-size: 14px;
-  }
-
-  .hero-grid,
+/* Tablet + mobile shared — same query as live intro layout */
+@media (max-width: 1024px) {
   .about-grid,
   .bento,
-  .yt-featured,
-  .yt-more,
   .app-box,
   .login-box,
-  .footer-grid,
-  .feature-grid {
+  .footer-grid {
     grid-template-columns: 1fr;
-  }
-
-  .shorts-grid {
-    grid-template-columns: repeat(4, 1fr);
   }
 
   .hero-visual img,
@@ -840,9 +841,149 @@ button {
     flex-direction: column;
     align-items: flex-start;
   }
+
+  .feature-card {
+    padding: clamp(20px, 3vw, 40px) clamp(16px, 2.5vw, 28px);
+    min-height: 0;
+  }
+
+  .shorts-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .app-box {
+    text-align: center;
+    padding: 40px;
+  }
+
+  .store-row {
+    justify-content: center;
+  }
+
+  .login-box {
+    text-align: center;
+  }
 }
 
-@media (max-width: 640px) {
+/* Tablet only — live uses 601–1024 */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .hero-grid {
+    gap: 28px;
+    padding: clamp(70px, 11vw, 110px) 0 48px;
+  }
+
+  .hero-kicker {
+    font-size: clamp(14px, 2vw, 20px);
+  }
+
+  .hero h1 {
+    font-size: clamp(28px, 4.2vw, 42px);
+    line-height: 1.25;
+  }
+
+  .btn-cyan,
+  .btn-outline-light {
+    font-size: clamp(17px, 2vw, 20px);
+    height: clamp(42px, 5vw, 50px);
+    padding: 0 clamp(36px, 5vw, 50px);
+  }
+
+  .feature-card .label,
+  .feature-card h3 {
+    font-size: clamp(10px, 1.8vw, 20px);
+  }
+
+  .feature-card p {
+    font-size: clamp(8px, 1.2vw, 13px);
+    line-height: 1.4;
+  }
+
+  .yt-more {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Mobile — live uses max-width: 600px */
+@media (max-width: 600px) {
+  :root {
+    --header-h: 48px;
+  }
+
+  .wrap,
+  .site-header .wrap,
+  .clients-label {
+    width: min(1286px, calc(100% - 32px));
+  }
+
+  .site-header {
+    padding: 12px 0 10px;
+  }
+
+  .logo img {
+    height: 20px;
+  }
+
+  .hero-grid {
+    grid-template-columns: 1fr;
+    padding: 48px 0 40px;
+    gap: 24px;
+  }
+
+  .hero h1 {
+    font-size: clamp(20px, 6.5vw, 28px);
+    line-height: 1.3;
+  }
+
+  .hero-kicker {
+    font-size: 12px;
+    letter-spacing: 0.16em;
+  }
+
+  .hero-lead {
+    font-size: 15px;
+  }
+
+  .btn-cyan,
+  .btn-outline-light {
+    font-size: clamp(16px, 4.5vw, 20px);
+    height: 44px;
+    padding: 0 34px;
+  }
+
+  .hero-visual img,
+  .about-photo {
+    height: 220px;
+  }
+
+  .feature-grid,
+  .yt-featured,
+  .yt-more {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-card {
+    aspect-ratio: 1 / 1;
+    padding: 11vw 7vw;
+  }
+
+  .feature-card .label,
+  .feature-card h3 {
+    font-size: 7.5vw;
+  }
+
+  .feature-card h3 {
+    margin-bottom: 1.5vw;
+  }
+
+  .feature-card p {
+    font-size: 5vw;
+    line-height: 1.4;
+  }
+
+  .bento-card--photo {
+    display: none;
+  }
+
   .shorts-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -851,7 +992,44 @@ button {
     grid-template-columns: 1fr;
   }
 
-  .hero-grid {
-    padding: 48px 0 40px;
+  .section h2 {
+    font-size: 28px;
+  }
+
+  .section-lead {
+    font-size: 16px;
+  }
+
+  .review-card {
+    width: 260px;
+  }
+
+  .app-box {
+    padding: 28px 16px;
+  }
+
+  .store-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .store-row a img {
+    height: 44px;
+    margin: 0 auto;
+  }
+
+  .site-footer {
+    padding: 80px 0 40px;
+  }
+
+  .footer-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .footer-links {
+    flex-direction: column;
+    gap: 10px;
   }
 }
