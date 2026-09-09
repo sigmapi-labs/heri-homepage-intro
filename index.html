@@ -5,7 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HERi2go - AI-Driven Dental Order Automation</title>
   <meta name="description" content="From clinic systems to global dental labs, HERi2go uses AI to automate the entire order workflow. Global Labs Connected, Delivered in 7 Days.">
+  <meta name="theme-color" content="#1562e3">
+  <link rel="canonical" href="https://www.heri2go.com/">
   <link rel="icon" type="image/png" href="assets/images/logos/heri/symbol.png">
+  <link rel="apple-touch-icon" href="assets/images/logos/heri/symbol-circle.png">
+  <!-- Vue handoff: keep these absolute. Crawlers (Kakao, Slack, LinkedIn) do not run JS. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="HERi2go">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:url" content="https://www.heri2go.com/">
+  <meta property="og:title" content="HERi2go - AI-Driven Dental Order Automation">
+  <meta property="og:description" content="From clinic systems to global dental labs, HERi2go uses AI to automate the entire order workflow. Global Labs Connected, Delivered in 7 Days.">
+  <meta property="og:image" content="https://www.heri2go.com/assets/images/og-share.jpg">
+  <meta property="og:image:secure_url" content="https://www.heri2go.com/assets/images/og-share.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="HERi2go — dental order automation with global labs, delivered in 7 days">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="HERi2go - AI-Driven Dental Order Automation">
+  <meta name="twitter:description" content="From clinic systems to global dental labs, HERi2go uses AI to automate the entire order workflow. Global Labs Connected, Delivered in 7 Days.">
+  <meta name="twitter:image" content="https://www.heri2go.com/assets/images/og-share.jpg">
+  <meta name="twitter:image:alt" content="HERi2go — dental order automation with global labs, delivered in 7 days">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -68,7 +89,23 @@
         </div>
         <figure class="hero-product">
           <div class="hero-product-stage">
-            <img src="assets/images/hero-prosthetic.png" alt="Full-arch implant restoration">
+            <picture>
+              <source
+                type="image/avif"
+                srcset="assets/images/hero-prosthetic-640.avif 640w, assets/images/hero-prosthetic-960.avif 960w, assets/images/hero-prosthetic-1384.avif 1384w"
+                sizes="(max-width: 600px) calc(100vw - 32px), (max-width: 1024px) min(520px, calc(100vw - 48px)), min(700px, 48vw)">
+              <source
+                type="image/webp"
+                srcset="assets/images/hero-prosthetic-640.webp 640w, assets/images/hero-prosthetic-960.webp 960w, assets/images/hero-prosthetic-1384.webp 1384w"
+                sizes="(max-width: 600px) calc(100vw - 32px), (max-width: 1024px) min(520px, calc(100vw - 48px)), min(700px, 48vw)">
+              <img
+                src="assets/images/hero-prosthetic.png"
+                alt="Full-arch implant restoration"
+                width="1384"
+                height="701"
+                decoding="async"
+                fetchpriority="high">
+            </picture>
           </div>
           <figcaption>Full-arch implant restoration</figcaption>
         </figure>
@@ -126,7 +163,11 @@
       <div class="intro-delivery__inner">
         <div class="intro-delivery__left">
           <div class="intro-delivery__icon">
-            <img src="assets/images/icon_gd.png" alt="Global Delivery">
+            <picture>
+              <source type="image/avif" srcset="assets/images/icon_gd.avif">
+              <source type="image/webp" srcset="assets/images/icon_gd.webp">
+              <img src="assets/images/icon_gd.png" alt="Global Delivery" width="121" height="117" decoding="async">
+            </picture>
           </div>
           <h2 class="intro-delivery__title"><span class="intro-delivery__accent">7 Days</span><br> Global Delivery</h2>
           <p class="intro-delivery__desc">Fast enough for daily clinical operations.</p>
@@ -204,12 +245,22 @@
           <p class="section-lead">Scan a QR code with your phone camera to download the app.</p>
           <div class="app-stores">
             <a class="app-store" href="https://apps.apple.com/us/app/heri2go-clinic/id6767798415" target="_blank" rel="noopener">
-              <img class="app-store-qr" src="assets/images/qr_appstore.png" alt="App Store QR">
-              <img class="app-store-badge" src="assets/images/badge_appstore.svg" alt="Download on the App Store">
+              <picture>
+                <source type="image/webp" srcset="assets/images/qr_appstore.webp">
+                <img class="app-store-qr" src="assets/images/qr_appstore.png" alt="App Store QR" width="132" height="132" decoding="async">
+              </picture>
+              <img class="app-store-badge" src="assets/images/badge_appstore.svg" alt="Download on the App Store" height="48">
             </a>
             <a class="app-store" href="https://play.google.com/store/apps/details?id=com.heri2go.clinic" target="_blank" rel="noopener">
-              <img class="app-store-qr" src="assets/images/qr_playstore.png" alt="Google Play QR">
-              <img class="app-store-badge" src="assets/images/badge_googleplay.png" alt="Get it on Google Play">
+              <picture>
+                <source type="image/webp" srcset="assets/images/qr_playstore.webp">
+                <img class="app-store-qr" src="assets/images/qr_playstore.png" alt="Google Play QR" width="132" height="132" decoding="async">
+              </picture>
+              <picture>
+                <source type="image/avif" srcset="assets/images/badge_googleplay.avif">
+                <source type="image/webp" srcset="assets/images/badge_googleplay.webp">
+                <img class="app-store-badge" src="assets/images/badge_googleplay.png" alt="Get it on Google Play" width="161" height="48" decoding="async">
+              </picture>
             </a>
           </div>
         </div>
@@ -236,7 +287,11 @@
       <div class="intro-footer__inner">
         <div class="intro-footer__header">
           <a class="intro-footer__logo" href="#hero">
-            <img class="intro-footer__logo-img" src="assets/images/logos/heri/wordmark-white.png" alt="HERi2go">
+            <picture>
+              <source type="image/avif" srcset="assets/images/logos/heri/wordmark-white.avif">
+              <source type="image/webp" srcset="assets/images/logos/heri/wordmark-white.webp">
+              <img class="intro-footer__logo-img" src="assets/images/logos/heri/wordmark-white.png" alt="HERi2go" width="153" height="32" decoding="async">
+            </picture>
           </a>
           <div class="intro-footer__social gt-xs">
             <a class="intro-footer__social-link intro-footer__social-link--facebook" href="https://www.facebook.com/heri2go" target="_blank" rel="noopener"><img src="assets/images/facebook.png" alt="Facebook"></a>

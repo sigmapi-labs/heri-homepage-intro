@@ -192,6 +192,33 @@
     }
   }
 
+  function rasterSources(src) {
+    if (!src || !/\.png$/i.test(src)) {
+      return { png: src || "", webp: "", avif: "" };
+    }
+    return {
+      png: src,
+      webp: src.replace(/\.png$/i, ".webp"),
+      avif: src.replace(/\.png$/i, ".avif")
+    };
+  }
+
+  function pictureMarkup(src, alt, className, extraImgAttrs) {
+    const { png, webp, avif } = rasterSources(src);
+    const cls = className ? ` class="${className}"` : "";
+    const extra = extraImgAttrs ? ` ${extraImgAttrs}` : "";
+    if (!avif && !webp) {
+      return `<img${cls} src="${escapeHtml(png)}" alt="${escapeHtml(alt)}"${extra}>`;
+    }
+    const avifSource = avif
+      ? `<source type="image/avif" srcset="${escapeHtml(avif)}">`
+      : "";
+    const webpSource = webp
+      ? `<source type="image/webp" srcset="${escapeHtml(webp)}">`
+      : "";
+    return `<picture>${avifSource}${webpSource}<img${cls} src="${escapeHtml(png)}" alt="${escapeHtml(alt)}" decoding="async" loading="lazy"${extra}></picture>`;
+  }
+
   function renderClients() {
     const track = $("#client-track");
     if (!track) return;
@@ -199,7 +226,7 @@
       .map((client) => {
         const src = typeof client === "string" ? "" : client.src;
         const alt = typeof client === "string" ? client : client.alt;
-        return `<span class="client-pill"><img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}"></span>`;
+        return `<span class="client-pill">${pictureMarkup(src, alt)}</span>`;
       })
       .join("");
     track.innerHTML = pills;

@@ -349,6 +349,7 @@ button {
   pointer-events: none;
 }
 
+.hero-product-stage picture,
 .hero-product img {
   position: relative;
   z-index: 1;
@@ -356,6 +357,10 @@ button {
   height: auto;
   max-height: 300px;
   object-fit: contain;
+}
+
+.hero-product-stage picture {
+  display: block;
 }
 
 .hero-product figcaption {
@@ -495,6 +500,7 @@ button {
   justify-content: center;
 }
 
+.client-pill picture,
 .client-pill img {
   max-width: 200px;
   max-height: 56px;
@@ -590,6 +596,10 @@ button {
   width: 121px;
   height: auto;
   object-fit: contain;
+}
+
+.intro-delivery__icon picture {
+  display: inline-block;
 }
 
 .intro-delivery__title {
@@ -915,6 +925,10 @@ button {
   padding: 8px;
 }
 
+.app-store picture {
+  display: block;
+}
+
 .app-store-badge {
   height: 48px;
   width: auto;
@@ -976,9 +990,14 @@ button {
   padding: 0 100px 10px;
 }
 
+.intro-footer__logo picture,
 .intro-footer__logo-img {
   height: 22px;
   width: auto;
+}
+
+.intro-footer__logo picture {
+  display: block;
 }
 
 .intro-footer__social {
@@ -1214,6 +1233,7 @@ button {
     justify-content: center;
   }
 
+  .hero-product-stage picture,
   .hero-product img {
     width: min(100%, 520px);
     max-height: 230px;
@@ -1275,6 +1295,7 @@ button {
     padding: 0 6px;
   }
 
+  .client-pill picture,
   .client-pill img {
     max-width: 148px;
     max-height: 44px;
@@ -1356,6 +1377,7 @@ button {
     justify-content: center;
   }
 
+  .hero-product-stage picture,
   .hero-product img {
     width: 100%;
     max-height: 200px;
@@ -1411,6 +1433,7 @@ button {
     margin: 0 auto 12px;
   }
 
+  .intro-delivery__icon picture,
   .intro-delivery__icon img {
     width: 80px;
   }
