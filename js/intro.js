@@ -311,6 +311,66 @@
     bottom.innerHTML = cards(config.reviews.slice(mid));
   }
 
+  function bindHeroVisual() {
+    const stage = $("#hero-visual");
+    const card = $("#hero-visual-card");
+    if (!stage || !card) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+    if (reduceMotion.matches || !finePointer.matches) return;
+
+    let rect = null;
+    let raf = 0;
+    let targetX = 0;
+    let targetY = 0;
+    let currentX = 0;
+    let currentY = 0;
+
+    function measure() {
+      rect = stage.getBoundingClientRect();
+    }
+
+    function tick() {
+      raf = 0;
+      currentX += (targetX - currentX) * 0.12;
+      currentY += (targetY - currentY) * 0.12;
+
+      if (Math.abs(targetX - currentX) < 0.04) currentX = targetX;
+      if (Math.abs(targetY - currentY) < 0.04) currentY = targetY;
+
+      card.style.transform = `rotateX(${currentY.toFixed(3)}deg) rotateY(${currentX.toFixed(3)}deg)`;
+
+      if (currentX !== targetX || currentY !== targetY) {
+        raf = requestAnimationFrame(tick);
+      }
+    }
+
+    function requestTick() {
+      if (!raf) raf = requestAnimationFrame(tick);
+    }
+
+    stage.addEventListener("mouseenter", measure);
+
+    stage.addEventListener("mousemove", (event) => {
+      if (!rect) measure();
+      const x = (event.clientX - rect.left) / rect.width - 0.5;
+      const y = (event.clientY - rect.top) / rect.height - 0.5;
+      targetX = x * 12;
+      targetY = -(y * 12);
+      requestTick();
+    });
+
+    stage.addEventListener("mouseleave", () => {
+      targetX = 0;
+      targetY = 0;
+      requestTick();
+    });
+
+    window.addEventListener("resize", measure, { passive: true });
+    window.addEventListener("scroll", measure, { passive: true });
+  }
+
   function bindHeroChat() {
     const btn = $("#hero-chat");
     btn?.addEventListener("click", () => {
@@ -365,6 +425,7 @@
   renderReviews();
   bindNav();
   bindHeroChat();
+  bindHeroVisual();
 
   const fallback = fallbackFeed();
   renderYoutube(fallback);

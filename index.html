@@ -87,27 +87,31 @@
             <button class="btn btn-hero-chat" id="hero-chat" type="button">Chat Now</button>
           </div>
         </div>
-        <figure class="hero-product">
-          <div class="hero-product-stage">
+        <figure class="hero-visual" id="hero-visual">
+          <div class="hero-visual-card" id="hero-visual-card">
+            <div class="hero-hud hero-hud--outer" aria-hidden="true"></div>
+            <div class="hero-hud hero-hud--inner" aria-hidden="true"></div>
             <picture>
               <source
                 type="image/avif"
-                srcset="assets/images/hero-prosthetic-640.avif 640w, assets/images/hero-prosthetic-960.avif 960w, assets/images/hero-prosthetic-1384.avif 1384w"
-                sizes="(max-width: 600px) calc(100vw - 32px), (max-width: 1024px) min(520px, calc(100vw - 48px)), min(700px, 48vw)">
+                srcset="assets/images/hero-implant-640.avif 640w, assets/images/hero-implant-1024.avif 1024w"
+                sizes="(max-width: 600px) min(420px, 96vw), min(720px, 52vw)">
               <source
                 type="image/webp"
-                srcset="assets/images/hero-prosthetic-640.webp 640w, assets/images/hero-prosthetic-960.webp 960w, assets/images/hero-prosthetic-1384.webp 1384w"
-                sizes="(max-width: 600px) calc(100vw - 32px), (max-width: 1024px) min(520px, calc(100vw - 48px)), min(700px, 48vw)">
+                srcset="assets/images/hero-implant-640.webp 640w, assets/images/hero-implant-1024.webp 1024w"
+                sizes="(max-width: 600px) min(420px, 96vw), min(720px, 52vw)">
               <img
-                src="assets/images/hero-prosthetic.png"
-                alt="Full-arch implant restoration"
-                width="1384"
-                height="701"
+                class="hero-visual-img"
+                src="assets/images/hero-implant.png"
+                alt="CAD/CAM implant restoration"
+                width="1024"
+                height="558"
                 decoding="async"
                 fetchpriority="high">
             </picture>
           </div>
-          <figcaption>Full-arch implant restoration</figcaption>
+          <div class="hero-callout hero-callout--top">AI-optimized margin fit</div>
+          <div class="hero-callout hero-callout--bottom">Global lab routing</div>
         </figure>
       </div>
     </section>
@@ -132,28 +136,76 @@
               <h3>PREMIUM QUALITY</h3>
               <p>Precision and reliability<br>with CAD/CAM workflows</p>
             </div>
-            <div class="showcase-media" aria-hidden="true"></div>
+            <div class="showcase-media">
+              <picture>
+                <source
+                  type="image/avif"
+                  srcset="assets/images/why/quality-640.avif 640w, assets/images/why/quality-1024.avif 1024w"
+                  sizes="(max-width: 1024px) min(560px, calc(100vw - 48px)), min(480px, 42vw)">
+                <source
+                  type="image/webp"
+                  srcset="assets/images/why/quality-640.webp 640w, assets/images/why/quality-1024.webp 1024w"
+                  sizes="(max-width: 1024px) min(560px, calc(100vw - 48px)), min(480px, 42vw)">
+                <img src="assets/images/why/quality.jpg" alt="CAD/CAM implant bridge measured to 0.01 mm" width="1024" height="636" loading="lazy" decoding="async">
+              </picture>
+            </div>
           </article>
           <article class="showcase-card">
             <div class="showcase-copy">
               <h3>STERILE PACKAGING</h3>
               <p>Hygienic delivery with plasma sterilization</p>
             </div>
-            <div class="showcase-media" aria-hidden="true"></div>
+            <div class="showcase-media">
+              <picture>
+                <source
+                  type="image/avif"
+                  srcset="assets/images/why/sterile-640.avif 640w, assets/images/why/sterile-1024.avif 1024w"
+                  sizes="(max-width: 1024px) min(560px, calc(100vw - 48px)), min(480px, 42vw)">
+                <source
+                  type="image/webp"
+                  srcset="assets/images/why/sterile-640.webp 640w, assets/images/why/sterile-1024.webp 1024w"
+                  sizes="(max-width: 1024px) min(560px, calc(100vw - 48px)), min(480px, 42vw)">
+                <img src="assets/images/why/sterile.jpg" alt="Plasma-sterilized restoration in sealed packaging" width="1024" height="636" loading="lazy" decoding="async">
+              </picture>
+            </div>
           </article>
           <article class="showcase-card">
             <div class="showcase-copy">
               <h3>COMPETITIVE PRICING</h3>
               <p>Competitive pricing through global production</p>
             </div>
-            <div class="showcase-media" aria-hidden="true"></div>
+            <div class="showcase-media">
+              <picture>
+                <source
+                  type="image/avif"
+                  srcset="assets/images/why/pricing-640.avif 640w, assets/images/why/pricing-1024.avif 1024w"
+                  sizes="(max-width: 1024px) min(560px, calc(100vw - 48px)), min(480px, 42vw)">
+                <source
+                  type="image/webp"
+                  srcset="assets/images/why/pricing-640.webp 640w, assets/images/why/pricing-1024.webp 1024w"
+                  sizes="(max-width: 1024px) min(560px, calc(100vw - 48px)), min(480px, 42vw)">
+                <img src="assets/images/why/pricing.jpg" alt="Global lab network balancing quality and price" width="1024" height="636" loading="lazy" decoding="async">
+              </picture>
+            </div>
           </article>
           <article class="showcase-card">
             <div class="showcase-copy">
               <h3>1 YEAR WARRANTY</h3>
               <p>One-Year Warranty based on Strict Quality Standards</p>
             </div>
-            <div class="showcase-media" aria-hidden="true"></div>
+            <div class="showcase-media">
+              <picture>
+                <source
+                  type="image/avif"
+                  srcset="assets/images/why/warranty-640.avif 640w, assets/images/why/warranty-1024.avif 1024w"
+                  sizes="(max-width: 1024px) min(560px, calc(100vw - 48px)), min(480px, 42vw)">
+                <source
+                  type="image/webp"
+                  srcset="assets/images/why/warranty-640.webp 640w, assets/images/why/warranty-1024.webp 1024w"
+                  sizes="(max-width: 1024px) min(560px, calc(100vw - 48px)), min(480px, 42vw)">
+                <img src="assets/images/why/warranty.jpg" alt="Quality certificate and one-year warranty standards" width="1024" height="636" loading="lazy" decoding="async">
+              </picture>
+            </div>
           </article>
         </div>
       </div>
