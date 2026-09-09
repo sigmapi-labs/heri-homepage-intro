@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HERi2go - AI-Driven Dental Order Automation</title>
   <meta name="description" content="From clinic systems to global dental labs, HERi2go uses AI to automate the entire order workflow. Global Labs Connected, Delivered in 7 Days.">
-  <link rel="icon" type="image/png" href="assets/images/logo_heri2go.svg">
+  <link rel="icon" type="image/png" href="assets/images/logos/heri/symbol.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -24,11 +24,10 @@
     <header class="site-header">
       <div class="wrap">
         <a class="logo" href="#hero" aria-label="HERi2go">
-          <img src="assets/images/logo_heri2go.svg" alt="HERi2go">
+          <img src="assets/images/logos/heri/wordmark.svg" alt="HERi2go">
         </a>
         <nav class="nav gt-sm" aria-label="Page sections">
-          <a href="#about">About</a>
-          <a href="#features">Why HERi</a>
+          <a href="#showcase">Why HERi2go</a>
           <a href="#youtube">YouTube</a>
           <a href="#portfolio">Portfolio</a>
           <a href="#reviews">Reviews</a>
@@ -43,8 +42,7 @@
         </button>
       </div>
       <div class="mobile-nav lt-md" id="mobile-nav">
-        <a href="#about">About</a>
-        <a href="#features">Why HERi</a>
+        <a href="#showcase">Why HERi2go</a>
         <a href="#youtube">YouTube</a>
         <a href="#portfolio">Portfolio</a>
         <a href="#reviews">Reviews</a>
@@ -55,92 +53,64 @@
     </header>
 
     <section class="hero" id="hero">
-      <div class="wrap hero-grid">
-        <div>
-          <p class="hero-kicker">AI-Driven</p>
-          <h1>Dental Order Automation<br>Global Labs Connected<br>Delivered in <span>7 Days</span></h1>
-          <p class="hero-lead">From clinic systems to global dental labs, HERi2go uses AI to automate the entire order workflow.</p>
-          <div class="hero-actions">
-            <a class="btn btn-cyan" href="https://clinic.heri2go.com/clinic/public/signup">Get started with AI</a>
-            <a class="btn btn-outline-light" href="assets/heri2go-company-intro.pdf" download>회사소개서</a>
-          </div>
-        </div>
-        <div class="hero-visual">
-          <img src="assets/images/img_clinic001.png" alt="Digital dental clinic workflow">
-          <div class="hero-chip">Clinic systems · CAD/CAM labs · 7-day delivery</div>
+      <canvas class="hero-canvas" id="hero-canvas" aria-hidden="true"></canvas>
+      <div class="hero-grain" aria-hidden="true"></div>
+      <div class="wrap hero-stage">
+        <img class="hero-mark" src="assets/images/logos/heri/symbol-circle.png" alt="">
+        <p class="hero-kicker">AI-Driven</p>
+        <h1>Dental Order Automation<br>Global Labs Connected<br>Delivered in <span>7 Days</span></h1>
+        <div class="hero-actions">
+          <a class="btn btn-hero-pdf" href="assets/heri2go-company-intro.pdf" download>
+            <span class="material-icons" aria-hidden="true">download</span>
+            Get Brochure
+          </a>
+          <button class="btn btn-hero-chat" id="hero-chat" type="button">Chat Now</button>
         </div>
       </div>
-      <div class="clients">
-        <p class="clients-label">의뢰인 리스트 · placeholder names until logos arrive</p>
+    </section>
+
+    <div class="clients">
+      <div class="clients-inner wrap">
+        <p class="clients-kicker">300+ Partner dental clinics</p>
         <div class="marquee" aria-hidden="true">
           <div class="marquee-track" id="client-track"></div>
         </div>
       </div>
-    </section>
+    </div>
 
-    <section class="section about" id="about">
-      <div class="wrap about-grid">
-        <div class="about-copy">
-          <p class="section-kicker">Company</p>
-          <h2>A platform that connects clinics to certified labs worldwide.</h2>
-          <p>HERi2go is operated by HERIBio. We connect dentists and dental laboratories through AI order automation, a global lab marketplace, and a delivery standard built for daily clinical work.</p>
-          <p>Replace this block with the final company-intro copy, and swap the 회사소개서 button in the hero to the official PDF.</p>
-          <div class="about-stats">
-            <div class="stat"><b>7 days</b><span>Global delivery</span></div>
-            <div class="stat"><b>1 year</b><span>Warranty standard</span></div>
-            <div class="stat"><b>AI</b><span>Order automation</span></div>
-          </div>
-        </div>
-        <img class="about-photo" src="assets/images/img_Labs001.png" alt="Dental laboratory production">
-      </div>
-    </section>
-
-    <section class="section features" id="features">
+    <section class="showcase" id="showcase" aria-label="How HERi2go works">
       <div class="wrap">
-        <div class="section-head">
-          <div>
-            <p class="section-kicker">Why HERi2go</p>
-            <h2>The same promises, a cleaner layout.</h2>
-            <p class="section-lead">Copy stays. Visual noise from the previous cartoon hero does not.</p>
-          </div>
+        <div class="showcase-intro">
+          <h2>From Clinic systems<br>to global dental labs,<br>HERi2go uses AI to automate<br>the entire order workflow.</h2>
         </div>
-        <div class="feature-grid">
-          <article class="feature-card">
-            <p class="label">PREMIUM</p>
-            <h3>Quality</h3>
-            <p>Precision and reliability with CAD/CAM workflows.</p>
+        <div class="showcase-inner">
+          <article class="showcase-card">
+            <div class="showcase-copy">
+              <h3>PREMIUM QUALITY</h3>
+              <p>Precision and reliability<br>with CAD/CAM workflows</p>
+            </div>
+            <div class="showcase-media" aria-hidden="true"></div>
           </article>
-          <article class="feature-card">
-            <p class="label">STERILE</p>
-            <h3>Packaging</h3>
-            <p>Hygienic delivery with plasma sterilization.</p>
+          <article class="showcase-card">
+            <div class="showcase-copy">
+              <h3>STERILE PACKAGING</h3>
+              <p>Hygienic delivery with plasma sterilization</p>
+            </div>
+            <div class="showcase-media" aria-hidden="true"></div>
           </article>
-          <article class="feature-card">
-            <p class="label">COMPETITIVE</p>
-            <h3>Pricing</h3>
-            <p>Competitive pricing through global production.</p>
+          <article class="showcase-card">
+            <div class="showcase-copy">
+              <h3>COMPETITIVE PRICING</h3>
+              <p>Competitive pricing through global production</p>
+            </div>
+            <div class="showcase-media" aria-hidden="true"></div>
           </article>
-          <article class="feature-card">
-            <p class="label">1 YEAR</p>
-            <h3>Warranty</h3>
-            <p>One-year warranty based on strict quality standards.</p>
-          </article>
-        </div>
-        <div class="bento">
-          <article class="bento-card">
-            <h3>AI order automation</h3>
-            <p>A unified dashboard for scanner clouds. Orders created automatically from clinic systems.</p>
-          </article>
-          <article class="bento-card bento-card--photo">
-            <img src="assets/images/img_workflow.png" alt="Cloud-connected dental workflow">
-          </article>
-          <article class="bento-card">
-            <h3>Global lab marketplace</h3>
-            <p>Quick AI-powered translation across clinics and labs. Hello. Hola. 你好. 안녕하세요.</p>
-          </article>
-          <article class="bento-card">
-            <h3>7-day global delivery</h3>
-            <p>Quality check, protective packaging, plasma sterilization, then international shipping — fast enough for daily clinical operations.</p>
+          <article class="showcase-card">
+            <div class="showcase-copy">
+              <h3>1 YEAR WARRANTY</h3>
+              <p>One-Year Warranty based on Strict Quality Standards</p>
+            </div>
+            <div class="showcase-media" aria-hidden="true"></div>
           </article>
         </div>
       </div>
@@ -152,9 +122,9 @@
           <div>
             <p class="section-kicker">YouTube</p>
             <h2>Long-form from the channel.</h2>
-            <p class="section-lead">Two pinned videos, then more from the same channel. Click through to YouTube.</p>
+            <p class="section-lead">Come into the HERIBio YouTube channel and take the useful parts with you.</p>
           </div>
-          <a class="link-more" id="yt-channel-link" href="https://www.youtube.com/@HERIBioInc/videos" target="_blank" rel="noopener">Open channel</a>
+          <a class="link-more" id="yt-channel-link" href="https://www.youtube.com/@heri2go/videos" target="_blank" rel="noopener">Open channel</a>
         </div>
         <div class="yt-featured" id="yt-featured"></div>
         <div class="yt-more" id="yt-more"></div>
@@ -166,10 +136,10 @@
         <div class="section-head">
           <div>
             <p class="section-kicker">Portfolio</p>
-            <h2>Shorts, as they appear on the channel.</h2>
-            <p class="section-lead">Each tile is the Shorts thumbnail. Click it to open that video on the Shorts channel.</p>
+            <h2>Shorts from the clinic floor.</h2>
+            <p class="section-lead">Quick looks from the HERIBio channel — come in, watch a few, and take what you need.</p>
           </div>
-          <a class="link-more" id="shorts-channel-link" href="https://www.youtube.com/@HERIBioInc/shorts" target="_blank" rel="noopener">Open Shorts</a>
+          <a class="link-more" id="shorts-channel-link" href="https://www.youtube.com/@heri2go/shorts" target="_blank" rel="noopener">Open Shorts</a>
         </div>
         <div class="shorts-grid" id="shorts-grid"></div>
       </div>
@@ -179,7 +149,7 @@
       <div class="wrap">
         <p class="section-kicker">Reviews</p>
         <h2>What clinics say.</h2>
-        <p class="section-lead">Twenty placeholder reviews until the live list is confirmed. Rows move in opposite directions.</p>
+        <p class="section-lead">Clinics in Korea and abroad, on turnaround, fit, and the calls they no longer make.</p>
       </div>
       <div class="marquee review-row">
         <div class="marquee-track" id="review-track-top"></div>
@@ -192,28 +162,19 @@
     <section class="section app" id="app">
       <div class="wrap">
         <div class="app-box">
-          <div>
-            <p class="section-kicker">Clinic app</p>
-            <h2>Download the HERi2go CLINIC app.</h2>
-            <p class="section-lead">Manage dental orders anywhere — iOS and Android. On desktop, scan a QR code with your phone camera.</p>
-            <div class="store-row">
-              <a href="https://apps.apple.com/us/app/heri2go-clinic/id6767798415" target="_blank" rel="noopener">
-                <img src="assets/images/badge_appstore.svg" alt="Download on the App Store">
-              </a>
-              <a href="https://play.google.com/store/apps/details?id=com.heri2go.clinic" target="_blank" rel="noopener">
-                <img src="assets/images/badge_googleplay.png" alt="Get it on Google Play">
-              </a>
-            </div>
-          </div>
-          <div class="qr-row gt-sm">
-            <div class="qr-card">
-              <img src="assets/images/qr_appstore.png" alt="App Store QR">
-              App Store
-            </div>
-            <div class="qr-card">
-              <img src="assets/images/qr_playstore.png" alt="Google Play QR">
-              Google Play
-            </div>
+          <p class="section-kicker">Clinic app</p>
+          <h2>Download the HERi2go CLINIC App</h2>
+          <p class="section-lead">Manage your dental orders anywhere — available on iOS and Android.</p>
+          <p class="section-lead">Scan a QR code with your phone camera to download the app.</p>
+          <div class="app-stores">
+            <a class="app-store" href="https://apps.apple.com/us/app/heri2go-clinic/id6767798415" target="_blank" rel="noopener">
+              <img class="app-store-qr" src="assets/images/qr_appstore.png" alt="App Store QR">
+              <img class="app-store-badge" src="assets/images/badge_appstore.svg" alt="Download on the App Store">
+            </a>
+            <a class="app-store" href="https://play.google.com/store/apps/details?id=com.heri2go.clinic" target="_blank" rel="noopener">
+              <img class="app-store-qr" src="assets/images/qr_playstore.png" alt="Google Play QR">
+              <img class="app-store-badge" src="assets/images/badge_googleplay.png" alt="Get it on Google Play">
+            </a>
           </div>
         </div>
       </div>
@@ -222,55 +183,59 @@
     <section class="section login" id="login">
       <div class="wrap login-box">
         <div>
-          <p class="section-kicker" style="color:#b9f1ff">Account</p>
-          <h2>Sign in to HERi2go.</h2>
-          <p class="section-lead" style="color:rgba(255,255,255,.8)">Clinic login stays on clinic.heri2go.com. This section only sends people there — no password form on the intro.</p>
+          <p class="section-kicker" style="color:#b9f1ff">For clinics</p>
+          <h2>Your cases live here.</h2>
+          <p class="section-lead" style="color:rgba(255,255,255,.8)">Open the clinic portal to manage orders, check status, and keep the lab conversation in one place.</p>
         </div>
         <div class="login-card">
-          <h3>Clinic portal</h3>
-          <p>Owners sign in with email, Google, or Apple. Staff use the invitation link.</p>
+          <h3>Continue to HERi2go</h3>
+          <p>Returning clinics sign in here. If you are new, create an account and start with a case.</p>
           <a class="btn btn-primary" href="https://clinic.heri2go.com/clinic/login">Sign In</a>
           <a class="btn btn-ghost" href="https://clinic.heri2go.com/clinic/public/signup">Create an account</a>
         </div>
       </div>
     </section>
 
-    <footer class="site-footer" id="footer">
-      <div class="wrap">
-        <div class="footer-top">
-          <a class="logo logo--footer" href="#hero">
-            <img src="assets/images/logo_heri2go.svg" alt="HERi2go">
+    <footer class="intro-footer" id="footer">
+      <div class="intro-footer__inner">
+        <div class="intro-footer__header">
+          <a class="intro-footer__logo" href="#hero">
+            <img class="intro-footer__logo-img" src="assets/images/logos/heri/wordmark-white.png" alt="HERi2go">
           </a>
-          <div class="social gt-xs">
-            <a href="https://www.facebook.com/heri2go" target="_blank" rel="noopener"><img src="assets/images/facebook.png" alt="Facebook"></a>
-            <a href="https://www.instagram.com/heri2go/" target="_blank" rel="noopener"><img src="assets/images/Instagram.png" alt="Instagram"></a>
-            <a href="https://www.linkedin.com/company/heribio/" target="_blank" rel="noopener"><img src="assets/images/linkedin.png" alt="LinkedIn"></a>
-            <a href="https://www.youtube.com/@HERIBioInc" target="_blank" rel="noopener"><img src="assets/images/Youtube.png" alt="YouTube"></a>
-          </div>
-          <div class="social social--mobile lt-sm">
-            <a href="https://www.facebook.com/heri2go" target="_blank" rel="noopener"><img src="assets/images/facebook.png" alt="Facebook"></a>
-            <a href="https://www.instagram.com/heri2go/" target="_blank" rel="noopener"><img src="assets/images/Instagram.png" alt="Instagram"></a>
-            <a href="https://www.linkedin.com/company/heribio/" target="_blank" rel="noopener"><img src="assets/images/linkedin.png" alt="LinkedIn"></a>
-            <a href="https://www.youtube.com/@HERIBioInc" target="_blank" rel="noopener"><img src="assets/images/Youtube.png" alt="YouTube"></a>
+          <div class="intro-footer__social gt-xs">
+            <a class="intro-footer__social-link intro-footer__social-link--facebook" href="https://www.facebook.com/heri2go" target="_blank" rel="noopener"><img src="assets/images/facebook.png" alt="Facebook"></a>
+            <a class="intro-footer__social-link" href="https://www.instagram.com/heri2go/" target="_blank" rel="noopener"><img src="assets/images/Instagram.png" alt="Instagram"></a>
+            <a class="intro-footer__social-link" href="https://www.linkedin.com/company/heribio/" target="_blank" rel="noopener"><img src="assets/images/linkedin.png" alt="LinkedIn"></a>
+            <a class="intro-footer__social-link" href="https://www.youtube.com/@heri2go" target="_blank" rel="noopener"><img src="assets/images/Youtube.png" alt="YouTube"></a>
           </div>
         </div>
-        <div class="footer-grid">
-          <div>
-            <p>HERi2go is a service platform which connects the members in HERi2go service and we are not responsible for every type of conflicts between users.</p>
-            <p style="margin-top:12px">HERIBio INC. CEO Leo Sangho Eom<br>Business registration number : 497-81-01522<br>E-commerce Registration : Gangnam No.00858</p>
+        <div class="intro-footer__top">
+          <div class="intro-footer__brand">
+            <p class="intro-footer__brand-desc">HERi2go is a service platform which connects the members in HERi2go service and we are not responsible for every type of conflicts between users.</p>
           </div>
-          <div>
-            14F, 354, Gangnam-daero, Seoul, South Korea<br>+82 2 553 1700
-          </div>
-          <div>
-            418 Broadway #10286 Albany, NY 12207<br>+1 (331) 777-0512
+          <div class="intro-footer__info">
+            <p>HERIBio INC. <span class="intro-footer__highlight">CEO Leo Sangho Eom</span></p>
+            <p>Business registration number : <span class="intro-footer__highlight">497-81-01522</span></p>
+            <p>E-commerce Registration : <span class="intro-footer__highlight">Gangnam No.00858</span></p>
+            <div class="intro-footer__address">
+              <p><span class="material-icons" aria-hidden="true">location_on</span> 14F, 354, Gangnam-daero, Seoul, South Korea &nbsp; <span class="intro-footer__highlight">+82 2 553 1700</span></p>
+              <p><span class="material-icons" aria-hidden="true">location_on</span> 418 Broadway #10286 Albany, NY 12207 &nbsp; <span class="intro-footer__highlight">+1 (331) 777-0512</span></p>
+            </div>
+            <div class="intro-footer__social intro-footer__social--mobile lt-sm">
+              <a class="intro-footer__social-link intro-footer__social-link--facebook" href="https://www.facebook.com/heri2go" target="_blank" rel="noopener"><img src="assets/images/facebook.png" alt="Facebook"></a>
+              <a class="intro-footer__social-link" href="https://www.instagram.com/heri2go/" target="_blank" rel="noopener"><img src="assets/images/Instagram.png" alt="Instagram"></a>
+              <a class="intro-footer__social-link" href="https://www.linkedin.com/company/heribio/" target="_blank" rel="noopener"><img src="assets/images/linkedin.png" alt="LinkedIn"></a>
+              <a class="intro-footer__social-link" href="https://www.youtube.com/@heri2go" target="_blank" rel="noopener"><img src="assets/images/Youtube.png" alt="YouTube"></a>
+            </div>
           </div>
         </div>
-        <div class="footer-links">
-          <a href="https://www.heri2go.com/public/terms?type=SERVICE_CLN">Service Policy</a>
-          <a href="https://www.heri2go.com/public/terms?type=PRIVACY_CLN">Privacy Policy</a>
+        <div class="intro-footer__bottom">
+          <div class="intro-footer__links">
+            <a href="https://www.heri2go.com/public/terms?type=SERVICE_CLN">Service Policy</a>
+            <a href="https://www.heri2go.com/public/terms?type=PRIVACY_CLN">Privacy Policy</a>
+          </div>
+          <p class="intro-footer__copyright">© Copyright 2026. HERIBio INC. All rights reserved.</p>
         </div>
-        <p class="copyright">© Copyright 2026. HERIBio INC. All rights reserved.</p>
       </div>
     </footer>
   </div>

@@ -4,7 +4,7 @@
   const live = config.youtubeLive || {
     cacheMinutes: 30,
     longformFeatured: 2,
-    longformExtra: 3,
+    longformExtra: 0,
     shortsCount: 8
   };
 
@@ -31,12 +31,19 @@
     return `heri-yt-${config.youtubeMode}-${youtube.channelId || youtube.handle}`;
   }
 
+  function feedHasVideos(data) {
+    return Boolean(
+      (data?.longform && data.longform.length) || (data?.shorts && data.shorts.length)
+    );
+  }
+
   function readCache() {
     try {
       const raw = sessionStorage.getItem(cacheKey());
       if (!raw) return null;
       const parsed = JSON.parse(raw);
       if (!parsed || Date.now() > parsed.expiresAt) return null;
+      if (!feedHasVideos(parsed.data)) return null;
       return parsed.data;
     } catch (err) {
       return null;
@@ -72,9 +79,20 @@
     });
   }
 
+  async function fetchWithTimeout(url, timeoutMs) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+    try {
+      const res = await fetch(url, { signal: ctrl.signal });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
   async function fetchJson(url) {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const res = await fetchWithTimeout(url, 4000);
     return res.json();
   }
 
@@ -112,9 +130,10 @@
     )}`;
     const proxy = config.rssProxy || "";
     const url = proxy ? `${proxy}${encodeURIComponent(rss)}` : rss;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`RSS HTTP ${res.status}`);
-    return parseRss(await res.text());
+    const res = await fetchWithTimeout(url, 4000);
+    const items = parseRss(await res.text());
+    if (!items.length) throw new Error("RSS parsed empty");
+    return items;
   }
 
   async function splitLongAndShort(items) {
@@ -153,6 +172,8 @@
         source = "rss";
       }
 
+      if (!items.length) throw new Error("YouTube feed empty");
+
       const split = await splitLongAndShort(items);
       const data = {
         source,
@@ -162,6 +183,7 @@
         })),
         shorts: split.shorts
       };
+      if (!feedHasVideos(data)) throw new Error("YouTube split empty");
       writeCache(data);
       return data;
     } catch (err) {
@@ -174,7 +196,11 @@
     const track = $("#client-track");
     if (!track) return;
     const pills = duplicate(config.clients, 2)
-      .map((name) => `<span class="client-pill">${escapeHtml(name)}</span>`)
+      .map((client) => {
+        const src = typeof client === "string" ? "" : client.src;
+        const alt = typeof client === "string" ? client : client.alt;
+        return `<span class="client-pill"><img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}"></span>`;
+      })
       .join("");
     track.innerHTML = pills;
   }
@@ -257,6 +283,134 @@
     bottom.innerHTML = cards(config.reviews.slice(mid));
   }
 
+  function bindHeroFx() {
+    const hero = $("#hero");
+    const canvas = $("#hero-canvas");
+    if (!hero || !canvas) return;
+
+    const ctx = canvas.getContext("2d", { alpha: false });
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    let width = 0;
+    let height = 0;
+    let blobs = [];
+    let band = 0.38;
+
+    function seed() {
+      const min = Math.min(width, height);
+      blobs = [
+        { kind: "white", hx: 0.5, hy: -0.08, r: width * 0.72, a: 0.85, p: 0.2, sp: 0.04 },
+        { kind: "pale", hx: 0.22, hy: 0.04, r: min * 0.7, a: 0.28, p: 1.7, sp: 0.034 },
+        { kind: "pale", hx: 0.8, hy: 0.02, r: min * 0.64, a: 0.24, p: 3.1, sp: 0.037 },
+        { kind: "blue", hx: 0.48, hy: 0.42, r: min * 0.95, a: 0.55, p: 0.6, sp: 0.03 },
+        { kind: "blue", hx: 0.64, hy: 0.46, r: min * 0.82, a: 0.4, p: 2.4, sp: 0.033 },
+        { kind: "blue", hx: 0.32, hy: 0.48, r: min * 0.78, a: 0.34, p: 4.2, sp: 0.028 },
+        { kind: "deep", hx: 0.52, hy: 0.78, r: min * 0.9, a: 0.55, p: 5.5, sp: 0.026 }
+      ].map((blob, i) => ({
+        ...blob,
+        x: width * blob.hx,
+        y: height * blob.hy,
+        ampX: width * (0.045 + (i % 3) * 0.012),
+        ampY: height * (0.055 + (i % 2) * 0.02)
+      }));
+    }
+
+    function resize() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      width = Math.max(1, canvas.clientWidth || hero.clientWidth);
+      height = Math.max(1, canvas.clientHeight || hero.clientHeight);
+      canvas.width = Math.max(1, Math.round(width * dpr));
+      canvas.height = Math.max(1, Math.round(height * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      seed();
+    }
+
+    function step(now) {
+      const t = now * 0.001;
+      band = 0.34 + Math.sin(t * 0.07) * 0.03;
+      blobs.forEach((blob) => {
+        blob.x =
+          width * blob.hx +
+          Math.sin(t * blob.sp + blob.p) * blob.ampX +
+          Math.sin(t * blob.sp * 0.53 + blob.p * 1.7) * blob.ampX * 0.35;
+        blob.y =
+          height * blob.hy +
+          Math.cos(t * blob.sp * 0.86 + blob.p) * blob.ampY +
+          Math.sin(t * blob.sp * 0.41 + blob.p * 0.6) * blob.ampY * 0.4;
+        blob.pulse = 1 + Math.sin(t * blob.sp * 1.15 + blob.p) * 0.07;
+      });
+    }
+
+    function fillBlob(blob, inner, mid, outer, alpha) {
+      const radius = blob.r * (blob.pulse || 1);
+      const glow = ctx.createRadialGradient(blob.x, blob.y, 0, blob.x, blob.y, radius);
+      glow.addColorStop(0, inner.replace("A", String(alpha)));
+      glow.addColorStop(0.5, mid.replace("A", String(alpha * 0.4)));
+      glow.addColorStop(1, outer);
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(blob.x, blob.y, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function paint() {
+      ctx.globalCompositeOperation = "source-over";
+      const wash = ctx.createLinearGradient(0, 0, 0, height);
+      wash.addColorStop(0, "#f3f6ff");
+      wash.addColorStop(Math.max(0.06, band - 0.26), "#c9dbff");
+      wash.addColorStop(Math.max(0.2, band - 0.1), "#2d6dff");
+      wash.addColorStop(band, "#1359e5");
+      wash.addColorStop(Math.min(0.62, band + 0.16), "#050a16");
+      wash.addColorStop(0.78, "#000000");
+      wash.addColorStop(1, "#000000");
+      ctx.fillStyle = wash;
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.globalCompositeOperation = "overlay";
+      blobs.forEach((blob) => {
+        if (blob.kind === "blue") {
+          fillBlob(blob, "rgba(21,98,227,A)", "rgba(19,89,229,A)", "rgba(0,0,0,0)", blob.a);
+        } else if (blob.kind === "deep") {
+          fillBlob(blob, "rgba(0,0,0,A)", "rgba(4,12,32,A)", "rgba(0,0,0,0)", blob.a);
+        }
+      });
+
+      ctx.globalCompositeOperation = "screen";
+      blobs.forEach((blob) => {
+        if (blob.kind === "white") {
+          fillBlob(blob, "rgba(255,255,255,A)", "rgba(236,243,255,A)", "rgba(255,255,255,0)", blob.a * 0.7);
+        } else if (blob.kind === "pale") {
+          fillBlob(blob, "rgba(210,226,255,A)", "rgba(160,196,255,A)", "rgba(255,255,255,0)", blob.a * 0.45);
+        }
+      });
+      ctx.globalCompositeOperation = "source-over";
+    }
+
+    function frame(now) {
+      step(now);
+      paint();
+      requestAnimationFrame(frame);
+    }
+
+    resize();
+    step(performance.now());
+    paint();
+    window.addEventListener("resize", () => {
+      resize();
+      paint();
+    });
+    if (!reduced) requestAnimationFrame(frame);
+  }
+
+  function bindHeroChat() {
+    const btn = $("#hero-chat");
+    btn?.addEventListener("click", () => {
+      if (typeof window.ChannelIO === "function") {
+        window.ChannelIO("showMessenger");
+      }
+    });
+  }
+
   function bindNav() {
     const header = $(".site-header");
     const burger = $("#hamburger");
@@ -301,6 +455,12 @@
   renderClients();
   renderReviews();
   bindNav();
+  bindHeroChat();
+  bindHeroFx();
+
+  const fallback = fallbackFeed();
+  renderYoutube(fallback);
+  renderShorts(fallback);
 
   loadYoutubeFeed().then((feed) => {
     renderYoutube(feed);
