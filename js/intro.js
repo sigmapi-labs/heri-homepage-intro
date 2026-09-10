@@ -28,7 +28,7 @@
   }
 
   function cacheKey() {
-    return `heri-yt-${config.youtubeMode}-${youtube.channelId || youtube.handle}`;
+    return `heri-yt-${config.youtubeMode}-${youtube.channelId || youtube.handle}-v3`;
   }
 
   function feedHasVideos(data) {
@@ -91,8 +91,8 @@
     }
   }
 
-  async function fetchJson(url) {
-    const res = await fetchWithTimeout(url, 4000);
+  async function fetchJson(url, timeoutMs = 6000) {
+    const res = await fetchWithTimeout(url, timeoutMs);
     return res.json();
   }
 
@@ -124,13 +124,37 @@
       .filter((item) => item.id);
   }
 
+  function itemsFromRss2Json(data) {
+    return (data?.items || [])
+      .map((item) => {
+        const fromGuid = String(item.guid || "").replace(/^yt:video:/, "");
+        const fromLink = (String(item.link || "").match(/[?&]v=([^&]+)/) || [])[1];
+        return { id: fromGuid || fromLink || "", title: item.title || "" };
+      })
+      .filter((item) => item.id);
+  }
+
   async function fetchRecentFromRss(channelId) {
     const rss = `https://www.youtube.com/feeds/videos.xml?channel_id=${encodeURIComponent(
       channelId
     )}`;
+    const jsonEndpoint = config.rssJson || "";
+    if (jsonEndpoint) {
+      try {
+        const data = await fetchJson(
+          `${jsonEndpoint}${encodeURIComponent(rss)}`,
+          8000
+        );
+        const items = itemsFromRss2Json(data);
+        if (items.length) return items;
+      } catch (err) {
+        console.warn("[HERi intro] rss2json failed, trying XML proxy.", err);
+      }
+    }
+
     const proxy = config.rssProxy || "";
-    const url = proxy ? `${proxy}${encodeURIComponent(rss)}` : rss;
-    const res = await fetchWithTimeout(url, 4000);
+    const xmlUrl = proxy ? `${proxy}${encodeURIComponent(rss)}` : rss;
+    const res = await fetchWithTimeout(xmlUrl, 8000);
     const items = parseRss(await res.text());
     if (!items.length) throw new Error("RSS parsed empty");
     return items;
@@ -254,7 +278,6 @@
     const channelLink = $("#yt-channel-link");
     if (channelLink) {
       channelLink.href = youtube.videosUrl;
-      channelLink.textContent = `Open ${youtube.handle} videos`;
     }
     if (!featured || !more) return;
 
@@ -271,11 +294,6 @@
 
   function renderShorts(feed) {
     const grid = $("#shorts-grid");
-    const link = $("#shorts-channel-link");
-    if (link) {
-      link.href = youtube.shortsUrl;
-      link.textContent = `Open ${youtube.handle} Shorts`;
-    }
     if (!grid) return;
 
     const shorts = (feed.shorts || []).slice(0, live.shortsCount);
@@ -313,8 +331,8 @@
 
   function bindHeroVisual() {
     const stage = $("#hero-visual");
-    const card = $("#hero-visual-card");
-    if (!stage || !card) return;
+    const tilt = $("#hero-visual-tilt");
+    if (!stage || !tilt) return;
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
@@ -339,7 +357,7 @@
       if (Math.abs(targetX - currentX) < 0.04) currentX = targetX;
       if (Math.abs(targetY - currentY) < 0.04) currentY = targetY;
 
-      card.style.transform = `rotateX(${currentY.toFixed(3)}deg) rotateY(${currentX.toFixed(3)}deg)`;
+      tilt.style.transform = `rotateX(${currentY.toFixed(3)}deg) rotateY(${currentX.toFixed(3)}deg)`;
 
       if (currentX !== targetX || currentY !== targetY) {
         raf = requestAnimationFrame(tick);

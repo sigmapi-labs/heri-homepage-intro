@@ -6,24 +6,25 @@
  *   to paste new video IDs after each upload.
  * - Production: put a YouTube Data API v3 key in youtubeApiKey (HTTP referrer
  *   restricted to heri2go.com). Quota is tiny if results are cached.
- * - Until that key exists, rssProxy reads the public channel RSS. Replace the
- *   public proxy before launch if you do not want a third-party dependency.
+ * - Until that key exists, the page reads the public channel RSS via rssJson
+ *   (rss2json). rssProxy is a XML fallback. Replace both before launch if you
+ *   do not want a third-party dependency.
  * - Channel Talk stays on the live site. This intro HTML does not include it.
  */
 window.HERI_INTRO_CONFIG = {
   youtubeMode: "prod",
 
-  /* Empty until Google Cloud key is ready. Vue can inject this from env. */
-  youtubeApiKey: "",
+  youtubeApiKey: "AIzaSyAosasgexPNin_0KpjwZ4mfkKdYfL4-8EE",
 
   /* Used only when youtubeApiKey is empty. */
+  rssJson: "https://api.rss2json.com/v1/api.json?rss_url=",
   rssProxy: "https://api.allorigins.win/raw?url=",
 
   youtubeLive: {
     cacheMinutes: 30,
     longformFeatured: 2,
     longformExtra: 0,
-    shortsCount: 8
+    shortsCount: 4
   },
 
   loginUrl: "https://clinic.heri2go.com/clinic/login",
@@ -112,8 +113,9 @@ window.HERI_INTRO_CONFIG = {
       videosUrl: "https://www.youtube.com/@heri2go/videos",
       shortsUrl: "https://www.youtube.com/@heri2go/shorts",
       longform: [
+        { id: "UCJt2d7vbgU", title: "Would You Trust a Dental Lab in Korea?", featured: true },
         { id: "9ciL9E7JqYw", title: "How to find the best dental lab (HERi2go)", featured: true },
-        { id: "_1rV8cjBi8s", title: "How to Signup (Best DENTAL LAB platform)", featured: true },
+        { id: "_1rV8cjBi8s", title: "How to Signup (Best DENTAL LAB platform)" },
         { id: "9H0Fely_gRs", title: "Introduction of HERi2go service (Typography)" },
         { id: "yjVcIeLVHmY", title: "HERi2go Typograph (Korean Version)" },
         { id: "8MuRoAZM9N0", title: "Introduction of HERi2go service (Korean Version)" },

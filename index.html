@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HERi2go - AI-Driven Dental Order Automation</title>
   <meta name="description" content="From clinic systems to global dental labs, HERi2go uses AI to automate the entire order workflow. Global Labs Connected, Delivered in 7 Days.">
-  <meta name="theme-color" content="hsl(250, 80%, 60%)">
+  <meta name="theme-color" content="#1562e3">
   <link rel="canonical" href="https://www.heri2go.com/">
   <link rel="icon" type="image/png" href="assets/images/logos/heri/symbol.png">
   <link rel="apple-touch-icon" href="assets/images/logos/heri/symbol-circle.png">
@@ -55,8 +55,8 @@
           <a href="#app">App</a>
         </nav>
         <div class="header-actions gt-sm">
-          <a class="btn btn-ghost" href="https://clinic.heri2go.com/clinic/login">Sign In</a>
-          <a class="btn btn-primary" href="https://clinic.heri2go.com/clinic/public/signup">Sign Up</a>
+          <a class="btn btn-hero-pdf" href="https://clinic.heri2go.com/clinic/login">Sign In</a>
+          <a class="btn btn-hero-chat" href="https://clinic.heri2go.com/clinic/public/signup">Sign Up</a>
         </div>
         <button class="hamburger lt-md" id="hamburger" type="button" aria-label="Menu">
           <span class="material-icons">menu</span>
@@ -68,8 +68,10 @@
         <a href="#portfolio">Portfolio</a>
         <a href="#reviews">Reviews</a>
         <a href="#app">App</a>
-        <a class="btn btn-ghost" href="https://clinic.heri2go.com/clinic/login">Sign In</a>
-        <a class="btn btn-primary" href="https://clinic.heri2go.com/clinic/public/signup">Sign Up</a>
+        <div class="mobile-nav-actions">
+          <a class="btn btn-hero-pdf" href="https://clinic.heri2go.com/clinic/login">Sign In</a>
+          <a class="btn btn-hero-chat" href="https://clinic.heri2go.com/clinic/public/signup">Sign Up</a>
+        </div>
       </div>
     </header>
 
@@ -77,7 +79,11 @@
       <div class="wrap hero-stage">
         <div class="hero-copy">
           <p class="hero-kicker">AI-Driven</p>
-          <h1>Dental Order Automation<br>Global Labs Connected<br>Delivered in <span>7 Days</span></h1>
+          <h1>
+            <span class="hero-title-line">Dental Order Automation</span>
+            <span class="hero-title-line">Global Labs Connected</span>
+            <span class="hero-title-line">Delivered in <span class="hero-accent">7 Days</span></span>
+          </h1>
           <p class="hero-lead">Chairside order to a certified lab —<br>CAD/CAM restorations built for daily clinic work.</p>
           <div class="hero-actions">
             <a class="btn btn-hero-pdf" href="assets/heri2go-company-intro.pdf" download>
@@ -88,30 +94,34 @@
           </div>
         </div>
         <figure class="hero-visual" id="hero-visual">
-          <div class="hero-visual-card" id="hero-visual-card">
-            <div class="hero-hud hero-hud--outer" aria-hidden="true"></div>
-            <div class="hero-hud hero-hud--inner" aria-hidden="true"></div>
-            <picture>
-              <source
-                type="image/avif"
-                srcset="assets/images/hero-implant-640.avif 640w, assets/images/hero-implant-1024.avif 1024w"
-                sizes="(max-width: 600px) min(420px, 96vw), min(720px, 52vw)">
-              <source
-                type="image/webp"
-                srcset="assets/images/hero-implant-640.webp 640w, assets/images/hero-implant-1024.webp 1024w"
-                sizes="(max-width: 600px) min(420px, 96vw), min(720px, 52vw)">
-              <img
-                class="hero-visual-img"
-                src="assets/images/hero-implant.png"
-                alt="CAD/CAM implant restoration"
-                width="1024"
-                height="558"
-                decoding="async"
-                fetchpriority="high">
-            </picture>
+          <div class="hero-visual-card">
+            <div class="hero-visual-tilt" id="hero-visual-tilt">
+              <div class="hero-hud hero-hud--outer" aria-hidden="true"></div>
+              <div class="hero-hud hero-hud--inner" aria-hidden="true"></div>
+              <div class="hero-tooth">
+                <picture>
+                  <source
+                    type="image/avif"
+                    srcset="assets/images/hero-implant-640.avif 640w, assets/images/hero-implant-1024.avif 1024w"
+                    sizes="(max-width: 600px) min(420px, 96vw), min(720px, 52vw)">
+                  <source
+                    type="image/webp"
+                    srcset="assets/images/hero-implant-640.webp 640w, assets/images/hero-implant-1024.webp 1024w"
+                    sizes="(max-width: 600px) min(420px, 96vw), min(720px, 52vw)">
+                  <img
+                    class="hero-visual-img"
+                    src="assets/images/hero-implant.png"
+                    alt="CAD/CAM implant restoration"
+                    width="1024"
+                    height="558"
+                    decoding="async"
+                    fetchpriority="high">
+                </picture>
+              </div>
+            </div>
+            <div class="hero-callout hero-callout--crown">Global lab routing</div>
+            <div class="hero-callout hero-callout--side">AI-optimized margin fit</div>
           </div>
-          <div class="hero-callout hero-callout--top">AI-optimized margin fit</div>
-          <div class="hero-callout hero-callout--bottom">Global lab routing</div>
         </figure>
       </div>
     </section>
@@ -214,13 +224,6 @@
     <section class="intro-delivery" id="delivery">
       <div class="intro-delivery__inner">
         <div class="intro-delivery__left">
-          <div class="intro-delivery__icon">
-            <picture>
-              <source type="image/avif" srcset="assets/images/icon_gd.avif">
-              <source type="image/webp" srcset="assets/images/icon_gd.webp">
-              <img src="assets/images/icon_gd.png" alt="Global Delivery" width="121" height="117" decoding="async">
-            </picture>
-          </div>
           <h2 class="intro-delivery__title"><span class="intro-delivery__accent">7 Days</span><br> Global Delivery</h2>
           <p class="intro-delivery__desc">Fast enough for daily clinical operations.</p>
         </div>
@@ -248,12 +251,17 @@
     <section class="section" id="youtube">
       <div class="wrap">
         <div class="section-head">
-          <div>
-            <p class="section-kicker">YouTube</p>
+          <p class="section-kicker">YouTube</p>
+          <div class="section-head-title">
             <h2>Long-form from the channel.</h2>
-            <p class="section-lead">Come into the HERIBio YouTube channel and take the useful parts with you.</p>
+            <a class="btn-go-yt" id="yt-channel-link" href="https://www.youtube.com/@heri2go/videos" target="_blank" rel="noopener">
+              Go YouTube
+              <svg class="btn-go-yt__logo" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" fill-rule="evenodd" d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186 31.59 31.59 0 0 0 0 12a31.59 31.59 0 0 0 .502 5.814 3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136A31.59 31.59 0 0 0 24 12a31.59 31.59 0 0 0-.502-5.814ZM9.545 15.568V8.432L15.818 12 9.545 15.568Z"/>
+              </svg>
+            </a>
           </div>
-          <a class="link-more" id="yt-channel-link" href="https://www.youtube.com/@heri2go/videos" target="_blank" rel="noopener">Open channel</a>
+          <p class="section-lead">Come into the HERIBio YouTube channel and take the useful parts with you.</p>
         </div>
         <div class="yt-featured" id="yt-featured"></div>
         <div class="yt-more" id="yt-more"></div>
@@ -263,12 +271,11 @@
     <section class="section portfolio" id="portfolio">
       <div class="wrap">
         <div class="section-head">
-          <div>
-            <p class="section-kicker">Portfolio</p>
+          <p class="section-kicker">Portfolio</p>
+          <div class="section-head-title">
             <h2>Shorts from the clinic floor.</h2>
-            <p class="section-lead">Quick looks from the HERIBio channel — come in, watch a few, and take what you need.</p>
           </div>
-          <a class="link-more" id="shorts-channel-link" href="https://www.youtube.com/@heri2go/shorts" target="_blank" rel="noopener">Open Shorts</a>
+          <p class="section-lead">Quick looks from the HERIBio channel — come in, watch a few, and take what you need.</p>
         </div>
         <div class="shorts-grid" id="shorts-grid"></div>
       </div>
@@ -290,31 +297,29 @@
 
     <section class="section app" id="app">
       <div class="wrap">
-        <div class="app-box">
-          <p class="section-kicker">Clinic app</p>
-          <h2>Download the HERi2go CLINIC App</h2>
-          <p class="section-lead">Manage your dental orders anywhere — available on iOS and Android.</p>
-          <p class="section-lead">Scan a QR code with your phone camera to download the app.</p>
-          <div class="app-stores">
-            <a class="app-store" href="https://apps.apple.com/us/app/heri2go-clinic/id6767798415" target="_blank" rel="noopener">
-              <picture>
-                <source type="image/webp" srcset="assets/images/qr_appstore.webp">
-                <img class="app-store-qr" src="assets/images/qr_appstore.png" alt="App Store QR" width="132" height="132" decoding="async">
-              </picture>
-              <img class="app-store-badge" src="assets/images/badge_appstore.svg" alt="Download on the App Store" height="48">
-            </a>
-            <a class="app-store" href="https://play.google.com/store/apps/details?id=com.heri2go.clinic" target="_blank" rel="noopener">
-              <picture>
-                <source type="image/webp" srcset="assets/images/qr_playstore.webp">
-                <img class="app-store-qr" src="assets/images/qr_playstore.png" alt="Google Play QR" width="132" height="132" decoding="async">
-              </picture>
-              <picture>
-                <source type="image/avif" srcset="assets/images/badge_googleplay.avif">
-                <source type="image/webp" srcset="assets/images/badge_googleplay.webp">
-                <img class="app-store-badge" src="assets/images/badge_googleplay.png" alt="Get it on Google Play" width="161" height="48" decoding="async">
-              </picture>
-            </a>
-          </div>
+        <p class="section-kicker">Clinic app</p>
+        <h2>Download the HERi2go CLINIC App</h2>
+        <p class="section-lead">Manage your dental orders anywhere — available on iOS and Android.</p>
+        <p class="section-lead">Scan a QR code with your phone camera to download the app.</p>
+        <div class="app-stores">
+          <a class="app-store" href="https://apps.apple.com/us/app/heri2go-clinic/id6767798415" target="_blank" rel="noopener">
+            <picture>
+              <source type="image/webp" srcset="assets/images/qr_appstore.webp">
+              <img class="app-store-qr" src="assets/images/qr_appstore.png" alt="App Store QR" width="132" height="132" decoding="async">
+            </picture>
+            <img class="app-store-badge" src="assets/images/badge_appstore.svg" alt="Download on the App Store" height="48">
+          </a>
+          <a class="app-store" href="https://play.google.com/store/apps/details?id=com.heri2go.clinic" target="_blank" rel="noopener">
+            <picture>
+              <source type="image/webp" srcset="assets/images/qr_playstore.webp">
+              <img class="app-store-qr" src="assets/images/qr_playstore.png" alt="Google Play QR" width="132" height="132" decoding="async">
+            </picture>
+            <picture>
+              <source type="image/avif" srcset="assets/images/badge_googleplay.avif">
+              <source type="image/webp" srcset="assets/images/badge_googleplay.webp">
+              <img class="app-store-badge" src="assets/images/badge_googleplay.png" alt="Get it on Google Play" width="161" height="48" decoding="async">
+            </picture>
+          </a>
         </div>
       </div>
     </section>
@@ -329,8 +334,10 @@
         <div class="login-card">
           <h3>Continue to HERi2go</h3>
           <p>Returning clinics sign in here. If you are new, create an account and start with a case.</p>
-          <a class="btn btn-primary" href="https://clinic.heri2go.com/clinic/login">Sign In</a>
-          <a class="btn btn-ghost" href="https://clinic.heri2go.com/clinic/public/signup">Create an account</a>
+          <div class="login-actions">
+            <a class="btn btn-hero-pdf" href="https://clinic.heri2go.com/clinic/login">Sign In</a>
+            <a class="btn btn-hero-chat" href="https://clinic.heri2go.com/clinic/public/signup">Sign Up</a>
+          </div>
         </div>
       </div>
     </section>
