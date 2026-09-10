@@ -371,6 +371,124 @@
     window.addEventListener("scroll", measure, { passive: true });
   }
 
+  function bindMarquees() {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (reduceMotion.matches) return;
+
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+
+    [
+      { root: $(".clients"), duration: 55 },
+      { root: $("#reviews"), duration: 32 }
+    ].forEach(({ root, duration }) => {
+      if (!root) return;
+
+      root.querySelectorAll(".marquee").forEach((marquee) => {
+        const track = marquee.querySelector(".marquee-track");
+        if (!track) return;
+
+        const state = { hovering: false };
+        const driver = driveMarquee(track, duration, () => state.hovering);
+        if (!driver || !finePointer.matches) return;
+
+        marquee.addEventListener("pointerenter", () => {
+          state.hovering = true;
+          marquee.classList.add("is-paused");
+          driver.kick();
+        });
+
+        marquee.addEventListener("pointerleave", () => {
+          state.hovering = false;
+          marquee.classList.remove("is-paused");
+          driver.kick();
+        });
+      });
+    });
+  }
+
+  function driveMarquee(track, duration, isHovering) {
+    const marquee = track.closest(".marquee");
+    if (!marquee) return null;
+
+    const dir = marquee.classList.contains("marquee--reverse") ? 1 : -1;
+    let half = 0;
+    let offset = 0;
+    let velocity = 0;
+    let raf = 0;
+    let last = 0;
+
+    function measure() {
+      half = track.scrollWidth / 2;
+    }
+
+    function cruise() {
+      return half > 0 ? half / (duration * 1000) : 0;
+    }
+
+    function wrap(value) {
+      if (half <= 0) return 0;
+      let next = value;
+      while (next <= -half) next += half;
+      while (next > 0) next -= half;
+      return next;
+    }
+
+    function apply() {
+      track.style.transform = `translate3d(${offset.toFixed(3)}px, 0, 0)`;
+    }
+
+    function tick(now) {
+      const dt = last ? Math.min(now - last, 40) : 16;
+      last = now;
+
+      const target = isHovering() ? 0 : cruise();
+      const tau = isHovering() ? 170 : 300;
+      velocity += (target - velocity) * (1 - Math.exp(-dt / tau));
+      if (Math.abs(target - velocity) < 0.0008) velocity = target;
+
+      offset = wrap(offset + dir * velocity * dt);
+      apply();
+
+      if (velocity !== target || velocity !== 0) {
+        raf = requestAnimationFrame(tick);
+        return;
+      }
+
+      raf = 0;
+      last = 0;
+    }
+
+    function kick() {
+      if (!raf) raf = requestAnimationFrame(tick);
+    }
+
+    measure();
+    offset = wrap(dir > 0 ? -half : 0);
+    apply();
+    marquee.classList.add("is-driven");
+
+    const observer = new ResizeObserver(() => {
+      const progress = half > 0 ? Math.abs(offset) / half : 0;
+      measure();
+      offset = wrap(dir > 0 ? -half * (1 - progress) : -half * progress);
+      apply();
+    });
+    observer.observe(track);
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        if (raf) cancelAnimationFrame(raf);
+        raf = 0;
+        last = 0;
+        return;
+      }
+      kick();
+    });
+
+    kick();
+    return { kick };
+  }
+
   function bindHeroChat() {
     const btn = $("#hero-chat");
     btn?.addEventListener("click", () => {
@@ -426,6 +544,7 @@
   bindNav();
   bindHeroChat();
   bindHeroVisual();
+  bindMarquees();
 
   const fallback = fallbackFeed();
   renderYoutube(fallback);
