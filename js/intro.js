@@ -329,6 +329,122 @@
     bottom.innerHTML = cards(config.reviews.slice(mid));
   }
 
+  function bindHeroFlow() {
+    const flow = $(".hero-flow");
+    if (!flow) return;
+
+    const steps = [...flow.querySelectorAll(".hero-flow-step")];
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (!steps.length || reduceMotion.matches) return;
+
+    let index = 0;
+    let timer = 0;
+
+    function activate() {
+      steps.forEach((step, i) => {
+        step.classList.toggle("is-active", i === index);
+      });
+      index = (index + 1) % steps.length;
+    }
+
+    function start() {
+      if (timer || document.hidden) return;
+      activate();
+      timer = window.setInterval(activate, 1600);
+    }
+
+    function stop() {
+      window.clearInterval(timer);
+      timer = 0;
+    }
+
+    start();
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) stop();
+      else start();
+    });
+  }
+
+  function bindTrustStats() {
+    const stats = [...document.querySelectorAll(".trust-stat dt[data-count]")];
+    if (!stats.length) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    function formatValue(el, value) {
+      const suffix = el.getAttribute("data-suffix") || "";
+      const sep = el.getAttribute("data-sep");
+      const rounded = Math.round(value);
+      const body = sep ? rounded.toLocaleString("en-US") : String(rounded);
+      return body + suffix;
+    }
+
+    function easeOutQuart(t) {
+      return 1 - Math.pow(1 - t, 4);
+    }
+
+    function animateStat(el, delay, onDone) {
+      const target = Number(el.getAttribute("data-count"));
+      if (!Number.isFinite(target)) return;
+
+      const parent = el.closest(".trust-stat");
+      const duration = 1400;
+      let start = 0;
+      let started = false;
+
+      function frame(now) {
+        if (!started) {
+          start = now + delay;
+          started = true;
+        }
+        const t = Math.min(1, Math.max(0, (now - start) / duration));
+        const value = target * easeOutQuart(t);
+        el.textContent = formatValue(el, t === 0 && delay > 0 ? 0 : value);
+        if (t < 1) {
+          requestAnimationFrame(frame);
+          return;
+        }
+        el.textContent = formatValue(el, target);
+        if (parent) parent.classList.add("is-landed");
+        if (onDone) onDone();
+      }
+
+      el.textContent = formatValue(el, 0);
+      requestAnimationFrame(frame);
+    }
+
+    function play() {
+      let remaining = stats.length;
+      const root = $(".trust-stats");
+
+      stats.forEach((el, i) => {
+        animateStat(el, i * 140, () => {
+          remaining -= 1;
+          if (remaining === 0 && root) root.classList.add("is-floating");
+        });
+      });
+    }
+
+    if (reduceMotion.matches) return;
+
+    const root = $(".trust-stats") || stats[0].closest(".trust");
+    if (!("IntersectionObserver" in window) || !root) {
+      play();
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        observer.disconnect();
+        play();
+      },
+      { threshold: 0.35 }
+    );
+
+    observer.observe(root);
+  }
+
   function bindHeroVisual() {
     const stage = $("#hero-visual");
     const tilt = $("#hero-visual-tilt");
@@ -563,6 +679,8 @@
   bindHeroChat();
   bindHeroVisual();
   bindMarquees();
+  bindHeroFlow();
+  bindTrustStats();
 
   const fallback = fallbackFeed();
   renderYoutube(fallback);
