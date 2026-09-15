@@ -1075,15 +1075,17 @@ button {
   margin-bottom: 36px;
 }
 
-.section-head-title {
+.section-head-top {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 16px;
+  margin-bottom: 10px;
 }
 
-.section-head-title h2 {
-  margin: 0;
+.section-head-top .section-kicker {
+  margin-bottom: 0;
+  line-height: 1;
 }
 
 .btn-go-yt {
@@ -1937,11 +1939,6 @@ button {
     padding: 72px 0;
   }
 
-  .section-head-title {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
   .shorts-grid {
     grid-template-columns: repeat(4, 1fr);
   }
@@ -2336,6 +2333,20 @@ button {
   .yt-featured,
   .yt-more {
     grid-template-columns: 1fr;
+  }
+
+  .btn-go-yt {
+    width: auto;
+    height: 34px;
+    padding: 0 12px;
+    gap: 6px;
+    border-radius: 10px;
+    font-size: 13px;
+  }
+
+  .btn-go-yt__logo {
+    width: 18px;
+    height: 18px;
   }
 
   .shorts-grid {
