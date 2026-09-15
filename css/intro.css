@@ -276,12 +276,16 @@ button {
   flex: 1;
   display: grid;
   grid-template-columns: minmax(0, 1.22fr) minmax(0, 1fr);
+  grid-template-areas:
+    "copy visual"
+    "flow flow";
   align-items: start;
   gap: 28px 24px;
   padding: 64px 0 8px;
 }
 
 .hero-copy {
+  grid-area: copy;
   text-align: left;
   padding-bottom: 40px;
 }
@@ -369,17 +373,19 @@ button {
 .hero-flow {
   position: relative;
   z-index: 5;
+  grid-area: flow;
   display: flex;
   align-items: flex-start;
   justify-content: center;
   gap: 0;
-  width: min(1080px, calc(100% - 48px));
+  width: min(1080px, 100%);
   margin: 0 auto;
   padding: 12px 0 44px;
   list-style: none;
 }
 
 .hero-flow-step {
+  position: relative;
   flex: 1 1 0;
   max-width: 168px;
   display: flex;
@@ -390,6 +396,9 @@ button {
 }
 
 .hero-flow-icon {
+  position: relative;
+  isolation: isolate;
+  z-index: 1;
   display: grid;
   place-items: center;
   width: 64px;
@@ -399,13 +408,36 @@ button {
   background: rgba(255, 255, 255, 0.18);
   border: 1.5px solid rgba(255, 255, 255, 0.85);
   box-shadow: 0 4px 16px rgba(0, 84, 255, 0.16);
-  transition: transform 0.35s ease, background 0.35s ease, box-shadow 0.35s ease;
+  transition: transform 0.35s ease, background 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.hero-flow-icon::after {
+  content: "";
+  position: absolute;
+  inset: -18px;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(0, 84, 255, 0.22) 0%,
+      rgba(0, 168, 255, 0.12) 42%,
+      rgba(0, 209, 255, 0) 72%
+    );
+  opacity: 0;
+  z-index: -1;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
 }
 
 .hero-flow-step.is-active .hero-flow-icon {
   transform: scale(1.08);
-  background: rgba(255, 255, 255, 0.28);
-  box-shadow: 0 6px 20px rgba(0, 84, 255, 0.22);
+  background: rgba(255, 255, 255, 0.32);
+  border-color: #fff;
+  box-shadow: 0 4px 14px rgba(0, 84, 255, 0.18);
+}
+
+.hero-flow-step.is-active .hero-flow-icon::after {
+  opacity: 1;
 }
 
 .hero-flow-icon svg {
@@ -416,17 +448,48 @@ button {
 }
 
 .hero-flow-label {
+  position: relative;
+  isolation: isolate;
+  z-index: 1;
+  display: inline-block;
   font-size: 14px;
   font-weight: 700;
   line-height: 1.35;
   letter-spacing: -0.01em;
   color: #fff;
   text-shadow: 0 1px 8px rgba(0, 84, 255, 0.4);
+  transition: opacity 0.35s ease, text-shadow 0.35s ease;
+}
+
+.hero-flow-label::before {
+  content: "";
+  position: absolute;
+  inset: -16px -22px;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      ellipse 72% 68% at 50% 50%,
+      rgba(0, 84, 255, 0.28) 0%,
+      rgba(0, 168, 255, 0.14) 40%,
+      rgba(0, 209, 255, 0) 70%
+    );
+  opacity: 0;
+  z-index: -1;
+  pointer-events: none;
   transition: opacity 0.35s ease;
 }
 
 .hero-flow-step:not(.is-active) .hero-flow-label {
   opacity: 0.78;
+}
+
+.hero-flow-step.is-active .hero-flow-label {
+  opacity: 1;
+  text-shadow: 0 1px 8px rgba(0, 84, 255, 0.28);
+}
+
+.hero-flow-step.is-active .hero-flow-label::before {
+  opacity: 1;
 }
 
 .hero-flow-arrow {
@@ -501,6 +564,12 @@ button {
   }
 }
 
+@keyframes hero-flow-dash-vert {
+  to {
+    background-position: 0 9px;
+  }
+}
+
 @keyframes hero-flow-scan {
   0%, 100% { opacity: 0.35; }
   40%, 60% { opacity: 1; }
@@ -523,6 +592,7 @@ button {
 
 .hero-visual {
   position: relative;
+  grid-area: visual;
   align-self: start;
   width: 100%;
   max-width: none;
@@ -1343,8 +1413,9 @@ button {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   align-items: center;
-  gap: 20px 32px;
-  margin: 40px 0 0;
+  justify-items: center;
+  gap: 16px 28px;
+  margin: 44px 0 0;
   padding: 0;
   list-style: none;
 }
@@ -1354,25 +1425,21 @@ button {
   align-items: center;
   justify-content: center;
   min-width: 0;
-  height: 44px;
+  width: 100%;
+  height: 48px;
 }
 
 .scanner-logo {
   display: block;
-  width: 140px;
-  height: 40px;
+  width: auto;
+  max-width: 100%;
+  height: 36px;
   object-fit: contain;
   object-position: center;
 }
 
-.scanner-logo--itero {
-  width: 118px;
-  height: 44px;
-}
-
-.scanner-logo--shining {
-  width: 156px;
-  height: 40px;
+.scanner-logo--medit {
+  height: 30px;
 }
 
 /* YouTube */
@@ -1900,6 +1967,67 @@ button {
   .scanners {
     padding: 56px 0 48px;
   }
+
+  .scanners-brands {
+    gap: 12px 18px;
+  }
+
+  .scanners-brands li {
+    height: 40px;
+  }
+
+  .scanner-logo {
+    height: 28px;
+  }
+
+  .scanner-logo--medit {
+    height: 24px;
+  }
+
+  .hero {
+    min-height: 0;
+    text-align: center;
+  }
+
+  .hero-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 56px 0 0;
+    gap: 0;
+  }
+
+  .hero-copy {
+    display: contents;
+  }
+
+  .hero-visual {
+    display: none;
+  }
+
+  .hero-kicker,
+  .hero h1 {
+    order: 1;
+    width: 100%;
+  }
+
+  .hero-lead {
+    order: 2;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-flow {
+    order: 3;
+    width: 100%;
+    padding: 28px 0 8px;
+  }
+
+  .hero-actions {
+    order: 4;
+    justify-content: center;
+    margin: 12px auto 36px;
+  }
 }
 
 /* Tablet only — live uses 601–1024 */
@@ -1919,15 +2047,7 @@ button {
 
   .hero-stage {
     padding: 64px 0 0;
-    grid-template-columns: 1fr;
-    justify-items: center;
     text-align: center;
-    gap: 12px;
-  }
-
-  .hero-copy {
-    text-align: center;
-    padding-bottom: 8px;
   }
 
   .hero-lead,
@@ -1941,58 +2061,8 @@ button {
   }
 
   .hero-flow {
-    padding: 8px 0 40px;
-    width: min(920px, calc(100% - 48px));
-  }
-
-  .hero-visual {
-    max-width: 560px;
-    height: 420px;
-    overflow: visible;
-  }
-
-  .hero-hud--outer {
-    width: 620px;
-    height: 620px;
-    margin-left: -310px;
-    margin-bottom: -340px;
-  }
-
-  .hero-hud--mid {
-    width: 500px;
-    height: 500px;
-    margin-left: -250px;
-    margin-bottom: -275px;
-  }
-
-  .hero-hud--inner {
-    width: 380px;
-    height: 380px;
-    margin-left: -190px;
-    margin-bottom: -210px;
-  }
-
-  .hero-tooth {
-    width: 108%;
-    margin-bottom: 0;
-    transform: translateZ(20px) translateY(10px) scale(0.82);
-  }
-
-  .hero-callout {
-    font-size: 13px;
-    padding: 10px 14px;
-    letter-spacing: 0.03em;
-  }
-
-  .hero-callout--crown {
-    top: 36%;
-    left: 14%;
-  }
-
-  .hero-callout--side {
-    top: 60%;
-    left: auto;
-    right: 4%;
+    padding: 28px 0 8px;
+    width: min(920px, 100%);
   }
 
   .btn-hero-pdf,
@@ -2090,32 +2160,29 @@ button {
   }
 
   .scanners-brands {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 28px 20px;
-    margin-top: 32px;
-  }
-
-  .scanners-brands li:last-child {
-    grid-column: 1 / -1;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 28px 10px;
+    margin-top: 28px;
   }
 
   .scanners-brands li {
-    height: 40px;
+    height: 36px;
+  }
+
+  .scanners-brands li:nth-child(-n+2) {
+    grid-column: span 3;
+  }
+
+  .scanners-brands li:nth-child(n+3) {
+    grid-column: span 2;
   }
 
   .scanner-logo {
-    width: 128px;
-    height: 36px;
+    height: 28px;
   }
 
-  .scanner-logo--itero {
-    width: 108px;
-    height: 40px;
-  }
-
-  .scanner-logo--shining {
-    width: 144px;
-    height: 36px;
+  .scanner-logo--medit {
+    height: 24px;
   }
 
   .showcase .wrap {
@@ -2157,22 +2224,7 @@ button {
   }
 
   .hero-stage {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 48px 0 20px;
-    text-align: center;
-    gap: 8px;
-  }
-
-  .hero-copy {
-    display: contents;
-  }
-
-  .hero-kicker,
-  .hero h1,
-  .hero-lead {
-    order: 1;
+    padding: 48px 0 0;
   }
 
   .hero-lead {
@@ -2180,98 +2232,85 @@ button {
     margin-right: auto;
   }
 
-  .hero-visual {
-    order: 2;
-    width: 100%;
-    max-width: 100%;
-    height: 360px;
-    overflow: visible;
-  }
-
   .hero-actions {
-    order: 3;
-    position: relative;
-    z-index: 4;
     width: 100%;
-    margin-top: 16px;
+    margin-top: 8px;
     padding-bottom: 8px;
-    justify-content: center;
   }
 
   .hero-flow {
-    width: min(1286px, calc(100% - 24px));
-    padding: 4px 0 28px;
+    width: min(300px, 100%);
+    padding: 20px 0 8px;
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .hero-flow-icon {
-    width: 46px;
-    height: 46px;
+    width: 52px;
+    height: 52px;
+    flex: 0 0 52px;
   }
 
   .hero-flow-icon svg {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
   }
 
   .hero-flow-label {
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 700;
+    text-align: left;
   }
 
   .hero-flow-arrow {
-    flex: 1 1 8px;
-    min-width: 8px;
-    max-width: none;
-    height: 46px;
+    flex: 0 0 auto;
+    width: 52px;
+    min-width: 52px;
+    max-width: 52px;
+    height: 22px;
+    align-self: flex-start;
+  }
+
+  .hero-flow-arrow::before {
+    left: 50%;
+    right: auto;
+    top: 2px;
+    bottom: 2px;
+    width: 2px;
+    height: auto;
+    transform: translateX(-50%);
+    background-image: repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.82) 0 4px,
+      transparent 4px 9px
+    );
+    background-size: 2px 9px;
+    animation-name: hero-flow-dash-vert;
+  }
+
+  .hero-flow-step.is-active + .hero-flow-arrow::before {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      #fff 0 4px,
+      transparent 4px 9px
+    );
   }
 
   .hero-flow-step {
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
     max-width: none;
-    gap: 8px;
+    width: 100%;
+    gap: 14px;
   }
 
-  .hero-hud--outer {
-    width: 500px;
-    height: 500px;
-    margin-left: -250px;
-    margin-bottom: -275px;
+  .hero-flow-icon::after {
+    inset: -12px;
   }
 
-  .hero-hud--mid {
-    width: 400px;
-    height: 400px;
-    margin-left: -200px;
-    margin-bottom: -220px;
-  }
-
-  .hero-hud--inner {
-    width: 300px;
-    height: 300px;
-    margin-left: -150px;
-    margin-bottom: -165px;
-  }
-
-  .hero-tooth {
-    width: 108%;
-    margin-bottom: 0;
-    transform: translateZ(20px) translateY(12px) scale(0.9);
-  }
-
-  .hero-callout {
-    font-size: 11px;
-    padding: 8px 12px;
-    letter-spacing: 0.02em;
-  }
-
-  .hero-callout--crown {
-    top: 30%;
-    left: 8%;
-  }
-
-  .hero-callout--side {
-    top: 54%;
-    left: auto;
-    right: 2%;
+  .hero-flow-label::before {
+    inset: -12px -16px;
   }
 
   .hero-kicker {
