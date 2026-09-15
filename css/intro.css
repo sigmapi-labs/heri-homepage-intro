@@ -729,7 +729,17 @@ button {
 
 .hero-callout--side {
   top: 76.14%;
-  left: 57.2%;
+  left: auto;
+  right: 0;
+}
+
+@media (min-width: 1025px) and (max-width: 1280px) {
+  .hero-callout {
+    font-size: 12px;
+    padding: 9px 14px;
+    gap: 8px;
+    letter-spacing: 0.03em;
+  }
 }
 
 /* Showcase — 2×3 desktop, 2 columns tablet, 1 column mobile */
@@ -811,7 +821,7 @@ button {
 .trust-inner {
   display: grid;
   grid-template-columns: minmax(240px, 0.82fr) minmax(0, 1.18fr);
-  align-items: center;
+  align-items: end;
   gap: 40px 56px;
 }
 
@@ -2017,16 +2027,16 @@ button {
     margin-right: auto;
   }
 
-  .hero-flow {
+  .hero-actions {
     order: 3;
-    width: 100%;
-    padding: 28px 0 8px;
+    justify-content: center;
+    margin: 24px auto 8px;
   }
 
-  .hero-actions {
+  .hero-flow {
     order: 4;
-    justify-content: center;
-    margin: 12px auto 36px;
+    width: 100%;
+    padding: 20px 0 36px;
   }
 }
 
@@ -2061,7 +2071,7 @@ button {
   }
 
   .hero-flow {
-    padding: 28px 0 8px;
+    padding: 20px 0 36px;
     width: min(920px, 100%);
   }
 
@@ -2234,15 +2244,15 @@ button {
 
   .hero-actions {
     width: 100%;
-    margin-top: 8px;
-    padding-bottom: 8px;
+    margin-top: 20px;
+    padding-bottom: 0;
   }
 
   .hero-flow {
-    width: min(300px, 100%);
-    padding: 20px 0 8px;
+    width: min(220px, 100%);
+    padding: 20px 0 28px;
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
   }
 
   .hero-flow-icon {
@@ -2259,7 +2269,7 @@ button {
   .hero-flow-label {
     font-size: 14px;
     font-weight: 700;
-    text-align: left;
+    text-align: center;
   }
 
   .hero-flow-arrow {
@@ -2268,7 +2278,7 @@ button {
     min-width: 52px;
     max-width: 52px;
     height: 22px;
-    align-self: flex-start;
+    align-self: center;
   }
 
   .hero-flow-arrow::before {
@@ -2297,12 +2307,12 @@ button {
   }
 
   .hero-flow-step {
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
-    text-align: left;
+    text-align: center;
     max-width: none;
     width: 100%;
-    gap: 14px;
+    gap: 8px;
   }
 
   .hero-flow-icon::after {
