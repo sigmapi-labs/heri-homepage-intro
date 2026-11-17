@@ -30,8 +30,8 @@ window.HERI_INTRO_CONFIG = {
   loginUrl: "https://clinic.heri2go.com/clinic/login",
   signupUrl: "https://clinic.heri2go.com/clinic/public/signup",
 
-  /* Replace with the real company deck when ready. */
-  companyDeckUrl: "assets/heri2go-company-intro.pdf",
+  companyDeckUrl: "assets/HERI2go_Service_Introduction.pdf",
+  labsDeckUrl: "assets/HERI2go_Our_Labs.pdf",
 
   appStoreUrl: "https://apps.apple.com/us/app/heri2go-clinic/id6767798415",
   playStoreUrl: "https://play.google.com/store/apps/details?id=com.heri2go.clinic",

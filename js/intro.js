@@ -632,6 +632,28 @@
     });
   }
 
+  function bindHeroBrochure() {
+    const btn = $("#hero-brochure");
+    if (!btn) return;
+    const files = [config.companyDeckUrl, config.labsDeckUrl].filter(Boolean);
+    if (files.length < 2) return;
+
+    btn.addEventListener("click", (event) => {
+      event.preventDefault();
+      files.forEach((href, index) => {
+        window.setTimeout(() => {
+          const link = document.createElement("a");
+          link.href = href;
+          link.download = href.split("/").pop();
+          link.rel = "noopener";
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+        }, index * 200);
+      });
+    });
+  }
+
   function bindNav() {
     const header = $(".site-header");
     const burger = $("#hamburger");
@@ -677,6 +699,7 @@
   renderReviews();
   bindNav();
   bindHeroChat();
+  bindHeroBrochure();
   bindHeroVisual();
   bindMarquees();
   bindHeroFlow();
