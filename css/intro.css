@@ -1550,6 +1550,10 @@ button {
   font-size: 16px;
 }
 
+.review-card > p:first-child {
+  margin-top: 0;
+}
+
 .review-card b {
   display: block;
   font-size: 14px;

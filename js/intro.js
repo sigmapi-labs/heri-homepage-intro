@@ -456,15 +456,21 @@
 
     const cards = (items) =>
       duplicate(items, 2)
-        .map(
-          (r) => `
+        .map((r) => {
+          const stars = r.stars
+            ? `<div class="stars">${starString(r.stars)}</div>`
+            : "";
+          const meta = r.practice
+            ? `<span class="review-meta">${escapeHtml(r.practice)}</span>`
+            : "";
+          return `
         <article class="review-card">
-          <div class="stars">${starString(r.stars)}</div>
+          ${stars}
           <p>${escapeHtml(r.text)}</p>
           <b>${escapeHtml(r.name)}</b>
-          <span class="review-meta">${escapeHtml(r.role)} · ${escapeHtml(r.practice)} · ${escapeHtml(r.place)}</span>
-        </article>`
-        )
+          ${meta}
+        </article>`;
+        })
         .join("");
 
     const mid = Math.ceil(config.reviews.length / 2);
