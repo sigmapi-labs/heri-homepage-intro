@@ -918,40 +918,6 @@ button {
   color: var(--muted);
 }
 
-.clients {
-  position: relative;
-  z-index: 1;
-  background: var(--white);
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  padding: 16px 0;
-}
-
-.clients-inner {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-}
-
-.clients-kicker {
-  flex: none;
-  width: 148px;
-  margin: 0;
-  text-align: left;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  line-height: 1.45;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.clients .marquee {
-  flex: 1;
-  min-width: 0;
-  padding: 8px 0;
-}
-
 .marquee {
   overflow: hidden;
   mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
@@ -963,11 +929,6 @@ button {
   gap: 12px;
   will-change: transform;
   animation: marquee-left 32s linear infinite;
-}
-
-.clients .marquee-track {
-  gap: 40px;
-  animation-duration: 55s;
 }
 
 .marquee--reverse .marquee-track {
@@ -984,39 +945,9 @@ button {
   }
 }
 
-.client-pill {
-  flex: none;
-  height: 72px;
-  width: auto;
-  padding: 0 8px;
-  background: none;
-  border: 0;
-  border-radius: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.client-pill picture,
-.client-pill img {
-  max-width: 200px;
-  max-height: 56px;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-}
-
 @media (hover: hover) and (pointer: fine) {
   .showcase-card:hover .showcase-media img {
     transform: scale(1.06);
-  }
-
-  .client-pill {
-    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .is-paused .client-pill:hover {
-    transform: scale(1.1);
   }
 
   .review-card {
@@ -1373,6 +1304,11 @@ button {
     animation: none;
   }
 
+  .shorts-track.is-sliding,
+  .shorts-track.is-fading {
+    transition: none;
+  }
+
   .showcase-media img {
     transition: none;
   }
@@ -1490,6 +1426,14 @@ button {
   padding: 14px 16px 16px;
   font-weight: 600;
   font-size: 16px;
+  line-height: 1.35;
+}
+
+.yt-card-title,
+.short-card-title {
+  display: block;
+  overflow: hidden;
+  overflow-wrap: anywhere;
 }
 
 .yt-more {
@@ -1517,14 +1461,32 @@ button {
   color: rgba(255, 255, 255, 0.72);
 }
 
-.shorts-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+.shorts-viewport {
+  overflow: hidden;
+  container-type: inline-size;
+}
+
+.shorts-track {
+  display: flex;
+  flex-wrap: nowrap;
   gap: 12px;
+  will-change: transform;
+}
+
+.shorts-track.is-sliding {
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.shorts-track.is-fading {
+  transition: opacity 0.3s ease;
+  opacity: 0;
 }
 
 .short-card {
   display: block;
+  flex: 0 0 calc((100cqi - 36px) / 4);
+  width: calc((100cqi - 36px) / 4);
+  min-width: 0;
   border-radius: 16px;
   overflow: hidden;
   background: #06162f;
@@ -1550,7 +1512,8 @@ button {
 }
 
 .empty-note {
-  grid-column: 1 / -1;
+  flex: 0 0 100cqi;
+  width: 100cqi;
   text-align: center;
   padding: 48px 16px;
   color: rgba(255, 255, 255, 0.7);
@@ -1943,6 +1906,11 @@ button {
     grid-template-columns: repeat(4, 1fr);
   }
 
+  .short-card {
+    flex-basis: calc((100cqi - 36px) / 4);
+    width: calc((100cqi - 36px) / 4);
+  }
+
   .login-box .section-lead {
     margin-left: auto;
     margin-right: auto;
@@ -2111,33 +2079,6 @@ button {
 
   .logo img {
     height: 20px;
-  }
-
-  .client-pill {
-    height: 56px;
-    padding: 0 6px;
-  }
-
-  .client-pill picture,
-  .client-pill img {
-    max-width: 148px;
-    max-height: 44px;
-  }
-
-  .clients {
-    padding: 14px 0 16px;
-  }
-
-  .clients-inner {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
-
-  .clients-kicker {
-    width: auto;
-    text-align: center;
-    letter-spacing: 0.2em;
   }
 
   .trust {
@@ -2349,8 +2290,23 @@ button {
     height: 18px;
   }
 
+  .shorts-track {
+    flex-wrap: wrap;
+    align-content: start;
+    width: 100%;
+  }
+
   .shorts-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .short-card {
+    flex-basis: calc((100cqi - 12px) / 2);
+    width: calc((100cqi - 12px) / 2);
+  }
+
+  .short-card:hover {
+    transform: none;
   }
 
   .section h2 {

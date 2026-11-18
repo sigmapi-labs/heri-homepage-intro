@@ -1,12 +1,17 @@
 (function () {
   const config = window.HERI_INTRO_CONFIG;
-  const youtube = config.youtube[config.youtubeMode] || config.youtube.test;
+  const youtube = config.youtube;
   const live = config.youtubeLive || {
     cacheMinutes: 30,
     longformFeatured: 2,
-    longformExtra: 0,
-    shortsCount: 8
+    longformExtra: 3,
+    shortsCount: 10,
+    shortsVisible: 4,
+    shortsRollMs: 5000
   };
+  let shortsRollTimer = 0;
+  let shortsFadeTimer = 0;
+  let shortsResizeObs = null;
 
   const $ = (sel, root = document) => root.querySelector(sel);
 
@@ -28,7 +33,7 @@
   }
 
   function cacheKey() {
-    return `heri-yt-${config.youtubeMode}-${youtube.channelId || youtube.handle}-v3`;
+    return `heri-yt-${youtube.channelId || youtube.handle}-v5`;
   }
 
   function feedHasVideos(data) {
@@ -96,19 +101,42 @@
     return res.json();
   }
 
-  async function fetchRecentFromApi(channelId, apiKey) {
-    const playlistId = `UU${channelId.slice(2)}`;
-    const playlist = await fetchJson(
-      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=30&playlistId=${encodeURIComponent(
-        playlistId
-      )}&key=${encodeURIComponent(apiKey)}`
-    );
+  function mapPlaylistItems(playlist) {
     return (playlist.items || [])
       .map((item) => ({
         id: item.snippet?.resourceId?.videoId,
         title: item.snippet?.title || ""
       }))
       .filter((item) => item.id);
+  }
+
+  async function fetchRecentFromApi(channelId, apiKey) {
+    const playlistId = `UU${channelId.slice(2)}`;
+    const longform = [];
+    const shorts = [];
+    const needLong = live.longformFeatured + live.longformExtra;
+    const needShort = live.shortsCount;
+    let pageToken = "";
+
+    for (let page = 0; page < 4; page += 1) {
+      const token = pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : "";
+      const playlist = await fetchJson(
+        `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${encodeURIComponent(
+          playlistId
+        )}&key=${encodeURIComponent(apiKey)}${token}`
+      );
+      const split = await splitLongAndShort(mapPlaylistItems(playlist));
+      longform.push(...split.longform);
+      shorts.push(...split.shorts);
+      pageToken = playlist.nextPageToken || "";
+      if (!pageToken) break;
+      if (longform.length >= needLong && shorts.length >= needShort) break;
+    }
+
+    return {
+      longform: longform.slice(0, needLong),
+      shorts: shorts.slice(0, needShort)
+    };
   }
 
   function parseRss(xmlText) {
@@ -186,26 +214,28 @@
     if (!youtube.channelId) return fallbackFeed();
 
     try {
-      let items;
+      let split;
       let source;
       if (config.youtubeApiKey) {
-        items = await fetchRecentFromApi(youtube.channelId, config.youtubeApiKey);
+        split = await fetchRecentFromApi(youtube.channelId, config.youtubeApiKey);
         source = "api";
       } else {
-        items = await fetchRecentFromRss(youtube.channelId);
+        const items = await fetchRecentFromRss(youtube.channelId);
+        if (!items.length) throw new Error("YouTube feed empty");
+        split = await splitLongAndShort(items);
         source = "rss";
       }
 
-      if (!items.length) throw new Error("YouTube feed empty");
-
-      const split = await splitLongAndShort(items);
+      const needLong = live.longformFeatured + live.longformExtra;
+      const longs = (split.longform.length ? split.longform : fallbackFeed().longform)
+        .slice(0, needLong);
       const data = {
         source,
-        longform: split.longform.map((item, index) => ({
+        longform: longs.map((item, index) => ({
           ...item,
           featured: index < live.longformFeatured
         })),
-        shorts: split.shorts
+        shorts: (split.shorts || []).slice(0, live.shortsCount)
       };
       if (!feedHasVideos(data)) throw new Error("YouTube split empty");
       writeCache(data);
@@ -214,46 +244,6 @@
       console.warn("[HERi intro] YouTube live fetch failed, using fallback IDs.", err);
       return fallbackFeed();
     }
-  }
-
-  function rasterSources(src) {
-    if (!src || !/\.png$/i.test(src)) {
-      return { png: src || "", webp: "", avif: "" };
-    }
-    return {
-      png: src,
-      webp: src.replace(/\.png$/i, ".webp"),
-      avif: src.replace(/\.png$/i, ".avif")
-    };
-  }
-
-  function pictureMarkup(src, alt, className, extraImgAttrs) {
-    const { png, webp, avif } = rasterSources(src);
-    const cls = className ? ` class="${className}"` : "";
-    const extra = extraImgAttrs ? ` ${extraImgAttrs}` : "";
-    if (!avif && !webp) {
-      return `<img${cls} src="${escapeHtml(png)}" alt="${escapeHtml(alt)}"${extra}>`;
-    }
-    const avifSource = avif
-      ? `<source type="image/avif" srcset="${escapeHtml(avif)}">`
-      : "";
-    const webpSource = webp
-      ? `<source type="image/webp" srcset="${escapeHtml(webp)}">`
-      : "";
-    return `<picture>${avifSource}${webpSource}<img${cls} src="${escapeHtml(png)}" alt="${escapeHtml(alt)}" decoding="async" loading="lazy"${extra}></picture>`;
-  }
-
-  function renderClients() {
-    const track = $("#client-track");
-    if (!track) return;
-    const pills = duplicate(config.clients, 2)
-      .map((client) => {
-        const src = typeof client === "string" ? "" : client.src;
-        const alt = typeof client === "string" ? client : client.alt;
-        return `<span class="client-pill">${pictureMarkup(src, alt)}</span>`;
-      })
-      .join("");
-    track.innerHTML = pills;
   }
 
   function videoCard(v, kind) {
@@ -267,9 +257,45 @@
       onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${v.id}/hqdefault.jpg'">`;
 
     if (kind === "short") {
-      return `<a class="${className}" href="${href}" target="_blank" rel="noopener">${img}<span>${title}</span></a>`;
+      return `<a class="${className}" href="${href}" target="_blank" rel="noopener">${img}<span class="short-card-title" data-full-title="${title}" title="${title}">${title}</span></a>`;
     }
-    return `<a class="${className}" href="${href}" target="_blank" rel="noopener"><figure>${img}<figcaption>${title}</figcaption></figure></a>`;
+    return `<a class="${className}" href="${href}" target="_blank" rel="noopener"><figure>${img}<figcaption><span class="yt-card-title" data-full-title="${title}" title="${title}">${title}</span></figcaption></figure></a>`;
+  }
+
+  function titleLineHeight(el) {
+    const styles = getComputedStyle(el);
+    const lineHeight = Number.parseFloat(styles.lineHeight);
+    if (lineHeight) return lineHeight;
+    return Number.parseFloat(styles.fontSize) * 1.35;
+  }
+
+  function clampTwoLines(root) {
+    const nodes = (root || document).querySelectorAll(".yt-card-title, .short-card-title");
+    nodes.forEach((el) => {
+      const full = el.getAttribute("data-full-title") || el.textContent;
+      el.textContent = full;
+      if (el.getBoundingClientRect().width < 24) return;
+      const styles = getComputedStyle(el);
+      const pad =
+        Number.parseFloat(styles.paddingTop) + Number.parseFloat(styles.paddingBottom);
+      const max = titleLineHeight(el) * 2 + pad;
+      if (!max || el.scrollHeight <= max + 1) return;
+      let lo = 0;
+      let hi = full.length;
+      while (lo < hi) {
+        const mid = Math.ceil((lo + hi) / 2);
+        el.textContent = `${full.slice(0, mid).trimEnd()}…`;
+        if (el.scrollHeight > max + 1) hi = mid - 1;
+        else lo = mid;
+      }
+      el.textContent = `${full.slice(0, Math.max(lo, 1)).trimEnd()}…`;
+    });
+  }
+
+  function clampTwoLinesSoon(root) {
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => clampTwoLines(root));
+    });
   }
 
   function renderYoutube(feed) {
@@ -290,20 +316,137 @@
 
     featured.innerHTML = lead.map((v) => videoCard(v, "long")).join("");
     more.innerHTML = rest.map((v) => videoCard(v, "long")).join("");
+    clampTwoLinesSoon(featured);
+    clampTwoLinesSoon(more);
+  }
+
+  function stopShortsRoll() {
+    if (shortsRollTimer) {
+      window.clearInterval(shortsRollTimer);
+      shortsRollTimer = 0;
+    }
+    if (shortsFadeTimer) {
+      window.clearTimeout(shortsFadeTimer);
+      shortsFadeTimer = 0;
+    }
+    if (shortsResizeObs) {
+      shortsResizeObs.disconnect();
+      shortsResizeObs = null;
+    }
+  }
+
+  function isMobileShorts() {
+    return window.matchMedia("(max-width: 600px)").matches;
+  }
+
+  function shortsVisibleCount(total) {
+    return Math.min(live.shortsVisible || 4, total);
+  }
+
+  function shortsRollStep() {
+    return isMobileShorts() ? 2 : 1;
+  }
+
+  function shortsCardStep(track) {
+    const card = track.querySelector(".short-card");
+    if (!card) return 0;
+    const styles = getComputedStyle(track);
+    const gap = Number.parseFloat(styles.columnGap || styles.gap) || 12;
+    return card.getBoundingClientRect().width + gap;
+  }
+
+  function shortsRowStep(track) {
+    const cards = track.querySelectorAll(".short-card");
+    if (cards.length >= 3) {
+      return cards[2].getBoundingClientRect().top - cards[0].getBoundingClientRect().top;
+    }
+    const card = cards[0];
+    if (!card) return 0;
+    const styles = getComputedStyle(track);
+    const gap = Number.parseFloat(styles.rowGap || styles.gap) || 12;
+    return card.getBoundingClientRect().height + gap;
+  }
+
+  function setShortsViewportHeight(viewport, track) {
+    if (!viewport) return;
+    if (!isMobileShorts()) {
+      viewport.style.height = "";
+      return;
+    }
+    const cards = track.querySelectorAll(".short-card");
+    if (cards.length < 3) {
+      viewport.style.height = "";
+      return;
+    }
+    const height =
+      cards[2].getBoundingClientRect().bottom - cards[0].getBoundingClientRect().top;
+    const next = `${Math.round(height)}px`;
+    if (viewport.style.height !== next) viewport.style.height = next;
+  }
+
+  function setShortsOffset(track, start, animate) {
+    track.classList.toggle("is-sliding", Boolean(animate));
+    if (isMobileShorts()) {
+      const rows = start / 2;
+      track.style.transform = `translate3d(0, ${-rows * shortsRowStep(track)}px, 0)`;
+      return;
+    }
+    track.style.transform = `translate3d(${-start * shortsCardStep(track)}px, 0, 0)`;
   }
 
   function renderShorts(feed) {
-    const grid = $("#shorts-grid");
-    if (!grid) return;
+    const track = $("#shorts-grid");
+    if (!track) return;
+    const viewport = track.closest(".shorts-viewport");
+    stopShortsRoll();
+    track.classList.remove("is-sliding", "is-fading");
+    track.style.transform = "";
+    track.style.opacity = "";
+    if (viewport) viewport.style.height = "";
 
     const shorts = (feed.shorts || []).slice(0, live.shortsCount);
     if (!shorts.length) {
-      grid.innerHTML =
+      track.innerHTML =
         '<p class="empty-note">No Shorts on this channel yet. They will appear here automatically after upload.</p>';
       return;
     }
 
-    grid.innerHTML = shorts.map((v) => videoCard(v, "short")).join("");
+    track.innerHTML = shorts.map((v) => videoCard(v, "short")).join("");
+    let start = 0;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const apply = (animate) => {
+      if (isMobileShorts() && start % 2) start -= 1;
+      if (!animate) setShortsViewportHeight(viewport, track);
+      setShortsOffset(track, start, animate && !reduceMotion);
+    };
+
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        clampTwoLines(track);
+        apply(false);
+      });
+    });
+
+    shortsResizeObs = new ResizeObserver(() => apply(false));
+    shortsResizeObs.observe(viewport || track);
+
+    const maxStart = () => shorts.length - shortsVisibleCount(shorts.length);
+    if (maxStart() <= 0 || reduceMotion) return;
+
+    shortsRollTimer = window.setInterval(() => {
+      if (start >= maxStart()) {
+        track.classList.remove("is-sliding");
+        track.classList.add("is-fading");
+        shortsFadeTimer = window.setTimeout(() => {
+          start = 0;
+          apply(false);
+          track.classList.remove("is-fading");
+        }, 280);
+        return;
+      }
+      start += shortsRollStep();
+      apply(true);
+    }, live.shortsRollMs || 5000);
   }
 
   function renderReviews() {
@@ -511,10 +654,7 @@
 
     const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
 
-    [
-      { root: $(".clients"), duration: 55 },
-      { root: $("#reviews"), duration: 32 }
-    ].forEach(({ root, duration }) => {
+    [{ root: $("#reviews"), duration: 32 }].forEach(({ root, duration }) => {
       if (!root) return;
 
       root.querySelectorAll(".marquee").forEach((marquee) => {
@@ -686,16 +826,12 @@
     const banner = $(".dev-banner");
     if (!banner) return;
     const source = feed?.source || "fallback";
-    if (config.youtubeMode === "test" || source !== "api") {
+    if (source !== "api") {
       banner.classList.add("is-on");
-      banner.textContent =
-        config.youtubeMode === "test"
-          ? `TEST MODE · Live YouTube from ${youtube.handle} (${source}). Set youtubeMode to "prod" and youtubeApiKey before launch.`
-          : `YouTube feed via ${source}. Set youtubeApiKey for production (no third-party proxy).`;
+      banner.textContent = `YouTube feed via ${source}. Set youtubeApiKey for production (no third-party proxy).`;
     }
   }
 
-  renderClients();
   renderReviews();
   bindNav();
   bindHeroChat();
