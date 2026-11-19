@@ -15,7 +15,7 @@ window.HERI_INTRO_CONFIG = {
     cacheMinutes: 30,
     longformFeatured: 2,
     longformExtra: 3,
-    shortsCount: 10,
+    shortsCount: 24,
     shortsVisible: 4,
     shortsRollMs: 5000
   },

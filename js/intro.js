@@ -5,13 +5,15 @@
     cacheMinutes: 30,
     longformFeatured: 2,
     longformExtra: 3,
-    shortsCount: 10,
+    shortsCount: 24,
     shortsVisible: 4,
     shortsRollMs: 5000
   };
   let shortsRollTimer = 0;
   let shortsFadeTimer = 0;
+  let shortsResumeTimer = 0;
   let shortsResizeObs = null;
+  let shortsInteractAbort = null;
 
   const $ = (sel, root = document) => root.querySelector(sel);
 
@@ -33,7 +35,7 @@
   }
 
   function cacheKey() {
-    return `heri-yt-${youtube.channelId || youtube.handle}-v5`;
+    return `heri-yt-${youtube.channelId || youtube.handle}-v6`;
   }
 
   function feedHasVideos(data) {
@@ -110,32 +112,58 @@
       .filter((item) => item.id);
   }
 
-  async function fetchRecentFromApi(channelId, apiKey) {
-    const playlistId = `UU${channelId.slice(2)}`;
-    const longform = [];
-    const shorts = [];
-    const needLong = live.longformFeatured + live.longformExtra;
-    const needShort = live.shortsCount;
+  async function fetchPlaylistItems(playlistId, apiKey, maxPages) {
+    const items = [];
     let pageToken = "";
-
-    for (let page = 0; page < 4; page += 1) {
+    for (let page = 0; page < maxPages; page += 1) {
       const token = pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : "";
       const playlist = await fetchJson(
         `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${encodeURIComponent(
           playlistId
         )}&key=${encodeURIComponent(apiKey)}${token}`
       );
-      const split = await splitLongAndShort(mapPlaylistItems(playlist));
-      longform.push(...split.longform);
-      shorts.push(...split.shorts);
+      items.push(...mapPlaylistItems(playlist));
       pageToken = playlist.nextPageToken || "";
       if (!pageToken) break;
-      if (longform.length >= needLong && shorts.length >= needShort) break;
     }
+    return items;
+  }
+
+  async function fetchRecentFromApi(channelId, apiKey) {
+    const suffix = channelId.slice(2);
+    const needLong = live.longformFeatured + live.longformExtra;
+    const needShort = live.shortsCount;
+    const shortsPromise = fetchPlaylistItems(`UUSH${suffix}`, apiKey, 1).catch(() => []);
+
+    const longform = [];
+    const shortsFromUploads = [];
+    let pageToken = "";
+    for (let page = 0; page < 4; page += 1) {
+      const token = pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : "";
+      const playlist = await fetchJson(
+        `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${encodeURIComponent(
+          `UU${suffix}`
+        )}&key=${encodeURIComponent(apiKey)}${token}`
+      );
+      const split = await splitLongAndShort(mapPlaylistItems(playlist));
+      longform.push(...split.longform);
+      shortsFromUploads.push(...split.shorts);
+      pageToken = playlist.nextPageToken || "";
+      if (!pageToken) break;
+      if (longform.length >= needLong) break;
+    }
+
+    const seen = new Set();
+    const shorts = [];
+    (await shortsPromise).concat(shortsFromUploads).forEach((item) => {
+      if (!item.id || seen.has(item.id) || shorts.length >= needShort) return;
+      seen.add(item.id);
+      shorts.push(item);
+    });
 
     return {
       longform: longform.slice(0, needLong),
-      shorts: shorts.slice(0, needShort)
+      shorts
     };
   }
 
@@ -329,9 +357,17 @@
       window.clearTimeout(shortsFadeTimer);
       shortsFadeTimer = 0;
     }
+    if (shortsResumeTimer) {
+      window.clearTimeout(shortsResumeTimer);
+      shortsResumeTimer = 0;
+    }
     if (shortsResizeObs) {
       shortsResizeObs.disconnect();
       shortsResizeObs = null;
+    }
+    if (shortsInteractAbort) {
+      shortsInteractAbort.abort();
+      shortsInteractAbort = null;
     }
   }
 
@@ -340,7 +376,8 @@
   }
 
   function shortsVisibleCount(total) {
-    return Math.min(live.shortsVisible || 4, total);
+    const visible = isMobileShorts() ? 2 : live.shortsVisible || 4;
+    return Math.min(visible, total);
   }
 
   function shortsRollStep() {
@@ -355,54 +392,40 @@
     return card.getBoundingClientRect().width + gap;
   }
 
-  function shortsRowStep(track) {
-    const cards = track.querySelectorAll(".short-card");
-    if (cards.length >= 3) {
-      return cards[2].getBoundingClientRect().top - cards[0].getBoundingClientRect().top;
-    }
-    const card = cards[0];
-    if (!card) return 0;
-    const styles = getComputedStyle(track);
-    const gap = Number.parseFloat(styles.rowGap || styles.gap) || 12;
-    return card.getBoundingClientRect().height + gap;
-  }
-
-  function setShortsViewportHeight(viewport, track) {
-    if (!viewport) return;
-    if (!isMobileShorts()) {
-      viewport.style.height = "";
-      return;
-    }
-    const cards = track.querySelectorAll(".short-card");
-    if (cards.length < 3) {
-      viewport.style.height = "";
-      return;
-    }
-    const height =
-      cards[2].getBoundingClientRect().bottom - cards[0].getBoundingClientRect().top;
-    const next = `${Math.round(height)}px`;
-    if (viewport.style.height !== next) viewport.style.height = next;
-  }
-
   function setShortsOffset(track, start, animate) {
     track.classList.toggle("is-sliding", Boolean(animate));
-    if (isMobileShorts()) {
-      const rows = start / 2;
-      track.style.transform = `translate3d(0, ${-rows * shortsRowStep(track)}px, 0)`;
-      return;
-    }
     track.style.transform = `translate3d(${-start * shortsCardStep(track)}px, 0, 0)`;
+  }
+
+  function alignShortsStart(value, total) {
+    const step = shortsRollStep();
+    const max = Math.max(0, total - shortsVisibleCount(total));
+    let next = value;
+    if (step > 1) next -= ((next % step) + step) % step;
+    if (next < 0) return 0;
+    if (next > max) return max - (max % step);
+    return next;
   }
 
   function renderShorts(feed) {
     const track = $("#shorts-grid");
+    const prevBtn = $("#shorts-prev");
+    const nextBtn = $("#shorts-next");
     if (!track) return;
-    const viewport = track.closest(".shorts-viewport");
+    const viewport = track.closest(".shorts-viewport") || $("#shorts-viewport");
     stopShortsRoll();
     track.classList.remove("is-sliding", "is-fading");
     track.style.transform = "";
     track.style.opacity = "";
-    if (viewport) viewport.style.height = "";
+    if (viewport) {
+      viewport.style.height = "";
+      viewport.classList.remove("is-dragging");
+    }
+    [prevBtn, nextBtn].forEach((btn) => {
+      if (!btn) return;
+      btn.hidden = true;
+      btn.disabled = true;
+    });
 
     const shorts = (feed.shorts || []).slice(0, live.shortsCount);
     if (!shorts.length) {
@@ -413,11 +436,69 @@
 
     track.innerHTML = shorts.map((v) => videoCard(v, "short")).join("");
     let start = 0;
+    let wheelAcc = 0;
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const maxStart = () => Math.max(0, shorts.length - shortsVisibleCount(shorts.length));
+
+    const syncNav = () => {
+      const max = maxStart();
+      const show = max > 0;
+      [prevBtn, nextBtn].forEach((btn) => {
+        if (btn) btn.hidden = !show;
+      });
+      if (prevBtn) prevBtn.disabled = start <= 0;
+      if (nextBtn) nextBtn.disabled = start >= max;
+    };
+
     const apply = (animate) => {
-      if (isMobileShorts() && start % 2) start -= 1;
-      if (!animate) setShortsViewportHeight(viewport, track);
+      start = alignShortsStart(start, shorts.length);
       setShortsOffset(track, start, animate && !reduceMotion);
+      syncNav();
+    };
+
+    const stopLoop = () => {
+      if (shortsRollTimer) {
+        window.clearInterval(shortsRollTimer);
+        shortsRollTimer = 0;
+      }
+      if (shortsFadeTimer) {
+        window.clearTimeout(shortsFadeTimer);
+        shortsFadeTimer = 0;
+      }
+    };
+
+    const startLoop = () => {
+      stopLoop();
+      if (maxStart() <= 0 || reduceMotion) return;
+      shortsRollTimer = window.setInterval(() => {
+        if (start >= maxStart()) {
+          track.classList.remove("is-sliding");
+          track.classList.add("is-fading");
+          shortsFadeTimer = window.setTimeout(() => {
+            start = 0;
+            apply(false);
+            track.classList.remove("is-fading");
+          }, 280);
+          return;
+        }
+        start += shortsRollStep();
+        apply(true);
+      }, live.shortsRollMs || 5000);
+    };
+
+    const scheduleResume = () => {
+      stopLoop();
+      if (shortsResumeTimer) window.clearTimeout(shortsResumeTimer);
+      shortsResumeTimer = window.setTimeout(() => {
+        shortsResumeTimer = 0;
+        startLoop();
+      }, (live.shortsRollMs || 5000) + 800);
+    };
+
+    const go = (dir) => {
+      start = alignShortsStart(start + dir * shortsRollStep(), shorts.length);
+      apply(true);
+      scheduleResume();
     };
 
     window.requestAnimationFrame(() => {
@@ -429,24 +510,145 @@
 
     shortsResizeObs = new ResizeObserver(() => apply(false));
     shortsResizeObs.observe(viewport || track);
+    startLoop();
 
-    const maxStart = () => shorts.length - shortsVisibleCount(shorts.length);
-    if (maxStart() <= 0 || reduceMotion) return;
+    if (maxStart() <= 0 || !viewport) return;
 
-    shortsRollTimer = window.setInterval(() => {
-      if (start >= maxStart()) {
-        track.classList.remove("is-sliding");
-        track.classList.add("is-fading");
-        shortsFadeTimer = window.setTimeout(() => {
-          start = 0;
-          apply(false);
-          track.classList.remove("is-fading");
-        }, 280);
+    shortsInteractAbort = new AbortController();
+    const { signal } = shortsInteractAbort;
+    let pointerId = null;
+    let dragging = false;
+    let axisLocked = "";
+    let originX = 0;
+    let originY = 0;
+    let originStart = 0;
+    let suppressClick = false;
+
+    const dragTo = (clientX) => {
+      const stepPx = shortsCardStep(track);
+      if (!stepPx) return;
+      const raw = originStart - (clientX - originX) / stepPx;
+      const max = maxStart();
+      let visual = raw;
+      if (visual < 0) visual *= 0.35;
+      else if (visual > max) visual = max + (visual - max) * 0.35;
+      track.classList.remove("is-sliding");
+      track.style.transform = `translate3d(${-visual * stepPx}px, 0, 0)`;
+    };
+
+    const endDrag = (clientX) => {
+      if (!dragging) return;
+      const wasHorizontal = axisLocked === "x";
+      dragging = false;
+      pointerId = null;
+      axisLocked = "";
+      viewport.classList.remove("is-dragging");
+      if (!wasHorizontal) {
+        start = originStart;
+        apply(false);
+        scheduleResume();
         return;
       }
-      start += shortsRollStep();
+      const stepPx = shortsCardStep(track);
+      const dx = clientX - originX;
+      if (Math.abs(dx) > 8) suppressClick = true;
+      if (stepPx && Math.abs(dx) > Math.min(40, stepPx * 0.22)) {
+        const raw = originStart - dx / stepPx;
+        start = alignShortsStart(
+          Math.round(raw / shortsRollStep()) * shortsRollStep(),
+          shorts.length
+        );
+      } else {
+        start = originStart;
+      }
       apply(true);
-    }, live.shortsRollMs || 5000);
+      scheduleResume();
+    };
+
+    viewport.addEventListener(
+      "pointerdown",
+      (event) => {
+        if (event.pointerType === "mouse" && event.button !== 0) return;
+        if (event.target.closest(".btn-shorts-nav")) return;
+        pointerId = event.pointerId;
+        dragging = true;
+        axisLocked = "";
+        originX = event.clientX;
+        originY = event.clientY;
+        originStart = start;
+        suppressClick = false;
+      },
+      { signal }
+    );
+
+    viewport.addEventListener(
+      "pointermove",
+      (event) => {
+        if (!dragging || event.pointerId !== pointerId) return;
+        const dx = event.clientX - originX;
+        const dy = event.clientY - originY;
+        if (!axisLocked) {
+          if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+          axisLocked = Math.abs(dx) >= Math.abs(dy) ? "x" : "y";
+          if (axisLocked !== "x") return;
+          stopLoop();
+          viewport.classList.add("is-dragging");
+          track.classList.remove("is-sliding", "is-fading");
+          track.style.opacity = "";
+          viewport.setPointerCapture?.(event.pointerId);
+        }
+        if (axisLocked !== "x") return;
+        event.preventDefault();
+        dragTo(event.clientX);
+      },
+      { signal }
+    );
+
+    viewport.addEventListener("pointerup", (event) => endDrag(event.clientX), { signal });
+    viewport.addEventListener("pointercancel", (event) => endDrag(event.clientX), { signal });
+
+    viewport.addEventListener(
+      "click",
+      (event) => {
+        if (!suppressClick) return;
+        event.preventDefault();
+        event.stopPropagation();
+        suppressClick = false;
+      },
+      { capture: true, signal }
+    );
+
+    viewport.addEventListener(
+      "wheel",
+      (event) => {
+        if (Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
+        event.preventDefault();
+        wheelAcc += event.deltaX;
+        const need = Math.max(28, shortsCardStep(track) * 0.35);
+        if (Math.abs(wheelAcc) < need) return;
+        const dir = wheelAcc > 0 ? 1 : -1;
+        wheelAcc = 0;
+        go(dir);
+      },
+      { passive: false, signal }
+    );
+
+    prevBtn?.addEventListener(
+      "click",
+      (event) => {
+        event.preventDefault();
+        go(-1);
+      },
+      { signal }
+    );
+    nextBtn?.addEventListener(
+      "click",
+      (event) => {
+        event.preventDefault();
+        go(1);
+      },
+      { signal }
+    );
   }
 
   function renderReviews() {

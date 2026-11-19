@@ -1462,8 +1462,20 @@ button {
 }
 
 .shorts-viewport {
+  position: relative;
   overflow: hidden;
   container-type: inline-size;
+  touch-action: pan-y;
+  cursor: grab;
+  user-select: none;
+}
+
+.shorts-viewport.is-dragging {
+  cursor: grabbing;
+}
+
+.shorts-viewport.is-dragging .short-card {
+  pointer-events: none;
 }
 
 .shorts-track {
@@ -1517,6 +1529,49 @@ button {
   text-align: center;
   padding: 48px 16px;
   color: rgba(255, 255, 255, 0.7);
+}
+
+.btn-shorts-nav {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  margin-top: -21px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(6, 22, 47, 0.72);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.28);
+  cursor: pointer;
+}
+
+.btn-shorts-nav.is-prev {
+  left: 8px;
+}
+
+.btn-shorts-nav.is-next {
+  right: 8px;
+}
+
+.btn-shorts-nav .material-icons {
+  font-size: 26px;
+}
+
+.btn-shorts-nav:hover:not(:disabled) {
+  background: rgba(6, 22, 47, 0.92);
+}
+
+.btn-shorts-nav:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.btn-shorts-nav[hidden] {
+  display: none;
 }
 
 /* Reviews */
@@ -2294,12 +2349,6 @@ button {
     height: 18px;
   }
 
-  .shorts-track {
-    flex-wrap: wrap;
-    align-content: start;
-    width: 100%;
-  }
-
   .shorts-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -2311,6 +2360,24 @@ button {
 
   .short-card:hover {
     transform: none;
+  }
+
+  .btn-shorts-nav {
+    width: 36px;
+    height: 36px;
+    margin-top: -18px;
+  }
+
+  .btn-shorts-nav.is-prev {
+    left: 4px;
+  }
+
+  .btn-shorts-nav.is-next {
+    right: 4px;
+  }
+
+  .btn-shorts-nav .material-icons {
+    font-size: 22px;
   }
 
   .section h2 {
