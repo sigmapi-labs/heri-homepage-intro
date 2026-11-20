@@ -1359,10 +1359,10 @@ button {
 
 .scanners-brands {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   align-items: center;
   justify-items: center;
-  gap: 16px 28px;
+  gap: 16px 20px;
   margin: 44px 0 0;
   padding: 0;
   list-style: none;
@@ -1384,6 +1384,10 @@ button {
   height: 36px;
   object-fit: contain;
   object-position: center;
+}
+
+.scanner-logo--sirona {
+  height: 42px;
 }
 
 .scanner-logo--medit {
@@ -2003,19 +2007,24 @@ button {
   }
 
   .scanners-brands {
-    gap: 12px 18px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px 24px;
   }
 
   .scanners-brands li {
-    height: 40px;
+    height: 44px;
   }
 
   .scanner-logo {
-    height: 28px;
+    height: 32px;
+  }
+
+  .scanner-logo--sirona {
+    height: 38px;
   }
 
   .scanner-logo--medit {
-    height: 24px;
+    height: 26px;
   }
 
   .hero {
@@ -2167,25 +2176,21 @@ button {
   }
 
   .scanners-brands {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 28px 10px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px 16px;
     margin-top: 28px;
   }
 
   .scanners-brands li {
-    height: 36px;
-  }
-
-  .scanners-brands li:nth-child(-n+2) {
-    grid-column: span 3;
-  }
-
-  .scanners-brands li:nth-child(n+3) {
-    grid-column: span 2;
+    height: 40px;
   }
 
   .scanner-logo {
     height: 28px;
+  }
+
+  .scanner-logo--sirona {
+    height: 34px;
   }
 
   .scanner-logo--medit {
